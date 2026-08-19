@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riverside Books | Customer Ordering & Loyalty</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand-logo">
+        <svg class="book-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <span class="brand-name">Riverside<br><small>Books</small></span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#story">Our Story</a>
+        <a href="#recommendations">Local Recommendations</a>
+        <a href="#catalog">Search Catalog</a>
+        <a href="#loyalty">Loyalty Rewards</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="loyalty-btn" aria-label="Loyalty Rewards">
+          🎟️ <span class="badge" id="nav-stamp-count">0/10 Stamps</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero-section">
+    <div class="hero-overlay">
+      <div class="hero-card">
+        <h1>Your Neighborhood Bookstore</h1>
+        <p>Discover, Connect, and Cozy Up with a Good Read in the Heart of the Community</p>
+        <div class="hero-search-bar">
+          <input type="text" id="catalog-search-input" placeholder="Search by title, author, or ISBN..." />
+          <button id="search-btn" class="btn-primary">Explore Our Collection</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Story & Local Recommendations Container -->
+  <section class="info-section-container">
+    <div class="info-grid">
+
+      <!-- Our Story Card -->
+      <article class="info-card" id="story">
+        <h3>Our Story</h3>
+        <p>
+          Founded in the heart of the neighborhood, Riverside Books began as a small indie shop dedicated to connecting readers with extraordinary stories. We curate titles from independent presses, host local authors, and foster a warm space for literary community.
+        </p>
+      </article>
+
+      <!-- Local Recommendations Card -->
+      <article class="info-card" id="recommendations">
+        <h3>Local Recommendations</h3>
+        <ul class="recommendations-list">
+          <li>
+            <strong>Barista’s Choice:</strong> <em>The Shadow of the Wind</em> — Pair with an espresso from Java Cafe next door.
+          </li>
+          <li>
+            <strong>Staff Pick:</strong> <em>Tomorrow, and Tomorrow, and Tomorrow</em> — A customer favorite for book clubs.
+          </li>
+        </ul>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Main Dashboard Container -->
+  <main class="main-container">
+    <h2 class="section-title">Catalog & Reader Rewards</h2>
+
+    <div class="dashboard-grid">
+
+      <!-- Column 1: Live Catalog / Featured Books (2/3 width) -->
+      <section class="card-column" id="catalog">
+        <div class="column-header">
+          <div>
+            <h3>Featured Shelf Inventory</h3>
+            <p class="subtitle">Fresh Off The Shelves — Reserve for Pickup</p>
+          </div>
+          <div class="catalog-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="in-stock">In Stock</button>
+            <button class="filter-btn" data-filter="fiction">Fiction</button>
+          </div>
+        </div>
+
+        <div class="books-grid" id="books-container">
+          <div class="book-card-loading">Loading live inventory...</div>
+        </div>
+      </section>
+
+      <!-- Column 2: Loyalty & Rewards Program (1/3 width) -->
+      <section class="card-column" id="loyalty">
+        <div class="column-header">
+          <h3>Digital Reader Rewards</h3>
+          <p class="subtitle">10 Stamps = $10 Store Credit</p>
+        </div>
+
+        <div class="loyalty-card-container">
+          <div class="stamp-grid" id="stamp-grid">
+            <!-- 10 Loyalty Stamp Slots rendered via JS -->
+          </div>
+          <div class="loyalty-status">
+            <p id="loyalty-progress-text">You have 0 of 10 stamps</p>
+            <button class="btn-primary full-width" id="show-qr-btn">Show QR at Counter</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Click & Collect Reservation Modal -->
+  <div class="modal-overlay hidden" id="reserve-modal">
+    <div class="modal-card">
+      <button class="close-modal" id="close-modal-btn">&times;</button>
+      <h3>Reserve Title for Pickup</h3>
+      <p id="modal-book-title" class="highlight-text">Book Title Here</p>
+      
+      <form id="reserve-form">
+        <input type="hidden" id="modal-isbn" />
+        
+        <label for="customer-name">Full Name</label>
+        <input type="text" id="customer-name" required placeholder="Jane Doe" />
+
+        <label for="customer-contact">Email or Phone Number</label>
+        <input type="text" id="customer-contact" required placeholder="jane@example.com or 555-0192" />
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm Reservation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loyalty QR Code Modal -->
+  <div class="modal-overlay hidden" id="qr-modal">
+    <div class="modal-card" style="text-align: center;">
+      <button class="close-modal" id="close-qr-btn">&times;</button>
+      <h3>Scan at Checkout</h3>
+      <p class="subtitle">Show this code to staff to earn stamps or redeem credit.</p>
+      
+      <div style="margin: 1.5rem 0;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=RIVERSIDE-CUSTOMER-1024" 
+             alt="Customer Loyalty QR Code" 
+             style="border: 2px solid var(--border-color); padding: 0.5rem; border-radius: 8px;" />
+      </div>
+      <p style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Member ID: #RIV-1024</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-links">
+        <a href="#story">Our Story</a>
+        <a href="#recommendations">Local Recommendations</a>
+        <a href="#">Hours</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-socials">
+        <span>Connect with us: 📸 📘 🎵</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script src="js/loyalty.js"></script>
+</body>
+</html>

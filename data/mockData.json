@@ -1,0 +1,26 @@
+[
+  {
+    "isbn": "9780593446065",
+    "title": "The Forest Whispers",
+    "author": "Author Whispers",
+    "price": 35.00,
+    "stock_quantity": 4,
+    "cover_image_url": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop"
+  },
+  {
+    "isbn": "9780385547345",
+    "title": "City Lights",
+    "author": "City Lights",
+    "price": 25.00,
+    "stock_quantity": 2,
+    "cover_image_url": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&auto=format&fit=crop"
+  },
+  {
+    "isbn": "9780525559474",
+    "title": "Riverside Tales",
+    "author": "Riverside Tales",
+    "price": 35.00,
+    "stock_quantity": 0,
+    "cover_image_url": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&auto=format&fit=crop"
+  }
+]
