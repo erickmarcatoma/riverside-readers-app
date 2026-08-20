@@ -3,8 +3,13 @@
 import { InventoryAPI } from './api.js';
 import { initSearch } from './search.js';
 
+let currentCategory = 'all';
+let currentSearchQuery = '';
+
 document.addEventListener('DOMContentLoaded', () => {
   initSearch((category, query) => {
+    currentCategory = category;
+    currentSearchQuery = query;
     loadFeaturedBooks(category, query);
   });
 
@@ -105,6 +110,9 @@ function initReservationForm() {
       alert('Hold request submitted! We are notifying staff at Riverside Books.');
       closeModal();
       reserveForm.reset();
+
+      // Refresh the catalog grid so the stock count reflects this reservation immediately
+      loadFeaturedBooks(currentCategory, currentSearchQuery);
 
       if (response && response.id) {
         startPickupAlertPolling(response.id);
