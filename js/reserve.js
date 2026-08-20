@@ -1,4 +1,5 @@
-// Function called when user clicks 'Reserve' button on a book card
+import { InventoryAPI } from './api.js';
+
 function openReserveModal(title, isbn) {
   const modal = document.getElementById('reserve-modal');
   const titleElem = document.getElementById('modal-book-title');
@@ -11,7 +12,6 @@ function openReserveModal(title, isbn) {
   }
 }
 
-// Modal event listeners for close/cancel/submit
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('reserve-modal');
   const closeBtn = document.getElementById('close-modal-btn');
@@ -20,16 +20,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const closeModal = () => {
     if (modal) modal.classList.add('hidden');
+    form?.reset();
   };
 
   closeBtn?.addEventListener('click', closeModal);
   cancelBtn?.addEventListener('click', closeModal);
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const bookTitle = document.getElementById('modal-book-title')?.innerText;
-    alert(`Reservation confirmed for "${bookTitle}"! Store staff have been notified.`);
-    closeModal();
-    form.reset();
+    const isbn = document.getElementById('modal-isbn')?.value;
+    const customerName = document.getElementById('modal-customer-name')?.value;
+    const customerContact = document.getElementById('modal-customer-contact')?.value;
+
+    if (!bookTitle || !customerName || !customerContact) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const reservationData = {
+        book_title: bookTitle,
+        isbn: isbn,
+        customer_name: customerName,
+        customer_contact: customerContact,
+        status: 'pending'
+      };
+
+      await InventoryAPI.createReservation(reservationData);
+
+      alert(`Reservation confirmed for "${bookTitle}"! Store staff have been notified.`);
+      closeModal();
+    } catch (error) {
+      alert(`Unable to submit reservation: ${error.message}`);
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 });
+
+export { openReserveModal };
