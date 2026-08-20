@@ -50,7 +50,10 @@ export const InventoryAPI = {
       }
 
       if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,isbn.ilike.%${searchQuery}%`);
+        // Books.isbn is a numeric column, so it can't take an ilike/text search -
+        // match it with an exact eq instead, only when the query is all digits.
+        const isbnFilter = /^\d+$/.test(searchQuery) ? `,isbn.eq.${searchQuery}` : '';
+        query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%${isbnFilter}`);
       }
 
       const { data: books, error } = await query;
@@ -157,11 +160,12 @@ export const InventoryAPI = {
           quantity: 1,
           order_type: 'Pre-order',
           status: 'Pending',
-          date: new Date().toISOString().slice(0, 10),
-          original_price: bookRow?.regular_price ?? null,
+          purchased_on: new Date().toISOString(),
+          original_unit_price: bookRow?.regular_price ?? null,
           price_paid: 0,
           discount_applied: 0,
           points_earned: 0,
+          receipt_number: null,
         }])
         .select()
         .single();
