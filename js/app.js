@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLoyaltyGrid(3);
 });
 
+/* ----------------------------------------------------
+   STEP 1 & 2: Search, Filter & Load Inventory
+---------------------------------------------------- */
 async function loadFeaturedBooks(category = 'all', searchQuery = '') {
   const container = document.getElementById('books-container');
   container.innerHTML = `<div class="book-card-loading">Searching Supabase catalog...</div>`;
@@ -37,15 +40,21 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
         stockText = `Only ${book.stock_quantity} left`;
       }
 
-      const safeTitle = (book.title || 'Untitled').replace(/'/g, "\\'");
+      // Safely check for either "title" or "tittle"
+      const displayTitle = book.title || book.tittle || 'Unknown Title';
+      const safeTitle = displayTitle.replace(/'/g, "\\'");
+      
+      // Force the fallback if the database cell is empty, has a typo, or doesn't start with 'http'
+      const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
+      const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
 
       return `
         <article class="book-card" data-isbn="${book.isbn}">
-          <img src="${book.cover_image_url || '[https://via.placeholder.com/80x115'}"](https://via.placeholder.com/80x115'}") alt="${book.title}" class="book-cover" />
+          <img src="${displayImage}" alt="${displayTitle}" class="book-cover" />
           <div class="book-info">
-            <h4>${book.title} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
+            <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
             <p class="book-author">by ${book.author}</p>
-            <p class="book-price">$${Number(book.price || 0).toFixed(2)}</p>
+            <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
             <button class="btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem; margin-top: 0.3rem;" 
               ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
               onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
@@ -66,6 +75,9 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
   }
 }
 
+/* ----------------------------------------------------
+   STEP 3: Reserve Modal Handler
+---------------------------------------------------- */
 window.openReserveModal = function(title, isbn) {
   const modal = document.getElementById('reserve-modal');
   document.getElementById('modal-book-title').innerText = title;
@@ -87,27 +99,28 @@ function initReservationForm() {
     e.preventDefault();
 
     const isbn = document.getElementById('modal-isbn').value;
+    const customerName = document.getElementById('customer-name').value;
+    const customerEmail = document.getElementById('customer-email').value;
+    const customerPhone = document.getElementById('customer-phone').value;
 
     try {
       const book = await InventoryAPI.getBookByIsbn(isbn);
 
-      const reservationData = {
-        book_id: book.id,
-        book_title: document.getElementById('modal-book-title').innerText,
-        isbn: isbn,
-        customer_name: document.getElementById('customer-name').value,
-        customer_contact: document.getElementById('customer-contact').value,
-        reserved_at: new Date().toISOString()
-      };
-
-      const response = await InventoryAPI.createReservation(reservationData);
+      const response = await InventoryAPI.createReservation({
+        bookId: book.book_id,
+        customerName,
+        customerEmail,
+        customerPhone,
+        quantity: 1,
+        regularPrice: book.regular_price
+      });
 
       alert('Hold request submitted! We are notifying staff at Riverside Books.');
       closeModal();
       reserveForm.reset();
 
-      if (response && response.id) {
-        startPickupAlertPolling(response.id);
+      if (response && response.purchase_id) {
+        startPickupAlertPolling(response.purchase_id);
       }
     } catch (err) {
       alert(`Unable to submit reservation: ${err.message || 'Check database permissions.'}`);
@@ -115,14 +128,17 @@ function initReservationForm() {
   });
 }
 
-function startPickupAlertPolling(reservationId) {
+/* ----------------------------------------------------
+   STEP 4: Pickup Alert Status Polling
+---------------------------------------------------- */
+function startPickupAlertPolling(purchaseId) {
   const pollInterval = setInterval(async () => {
     try {
-      const data = await InventoryAPI.getReservationStatus(reservationId);
+      const data = await InventoryAPI.getReservationStatus(purchaseId);
 
-      if (data && data.status === 'ready_for_pickup') {
+      if (data && data.status === 'Ready') {
         clearInterval(pollInterval);
-        alert(`🎉 Order Ready! Your hold for "${data.book_title || 'your book'}" is set aside at the counter. Show your QR code to collect!`);
+        alert(`🎉 Order Ready! Your book is set aside at the counter. Show your QR code to collect!`);
       }
     } catch (err) {
       console.warn('Polling reservation status...', err);
@@ -130,6 +146,9 @@ function startPickupAlertPolling(reservationId) {
   }, 5000);
 }
 
+/* ----------------------------------------------------
+   STEP 5: Reader Loyalty Stamp Rendering
+---------------------------------------------------- */
 function renderLoyaltyGrid(earnedCount = 0) {
   const grid = document.getElementById('stamp-grid');
   if (!grid) return;

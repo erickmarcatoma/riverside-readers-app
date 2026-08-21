@@ -10,52 +10,67 @@ const supabase = window.supabase
   : null;
 
 export const InventoryAPI = {
-  /**
-   * Step 1 & 2: Fetch books directly from Supabase 'books' table
-   * Supports filtering by stock status, category, and real-time search queries
-   */
   async getBooks(category = 'all', searchQuery = '') {
-    if (!supabase) {
-      throw new Error("Supabase client not initialized. Ensure CDN script is included in <head>.");
-    }
+    if (!supabase) throw new Error("Supabase library not loaded.");
 
     try {
-      let query = supabase.from('books').select('*');
+      let query = supabase.from('Books').select('*');
 
-      // 1. Filter by Stock Quantity
-      if (category === 'in-stock') {
-        query = query.gt('stock_quantity', 0);
-      } 
-      // 2. Case-Insensitive Category Filter
-      else if (category && category.toLowerCase() !== 'all') {
-        query = query.ilike('category', category);
+      if (category === 'bestseller') {
+        query = query.eq('bestseller', true);
+      } else if (category === 'staff-pick') {
+        query = query.eq('staff_pick', true);
+      } else if (category && category !== 'all' && category !== 'in-stock') {
+        query = query.eq('genre', category);
       }
 
-      // 3. Case-Insensitive Search Query (Matches Title or Author)
       if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
+        // Reverted back to the correct 'title' spelling for the search bar
+        query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,isbn.ilike.%${searchQuery}%`);
       }
 
-      const { data, error } = await query;
+      const { data: books, error: booksError } = await query;
+      if (booksError) throw booksError;
 
-      if (error) throw error;
-      return data;
+      if (!books || books.length === 0) return [];
+
+      const bookIds = books.map(b => b.book_id);
+      const { data: inventory, error: invError } = await supabase
+        .from('Inventory')
+        .select('book_id, qty_in_stock, low_stock_threshold, needs_reorder')
+        .in('book_id', bookIds);
+
+      if (invError) throw invError;
+
+      const merged = books.map(book => {
+        const stock = inventory?.find(inv => inv.book_id === book.book_id);
+        return {
+          ...book,
+          // Removed the override so your real database titles shine through
+          stock_quantity: stock?.qty_in_stock ?? 0,
+          low_stock_threshold: stock?.low_stock_threshold ?? 2,
+          needs_reorder: stock?.needs_reorder ?? false
+        };
+      });
+
+      if (category === 'in-stock') {
+        return merged.filter(b => b.stock_quantity > 0);
+      }
+
+      return merged;
     } catch (error) {
       console.error('Supabase Error fetching books:', error);
       throw error;
     }
   },
 
-  /**
-   * Helper: Look up a book's primary ID using its ISBN
-   */
   async getBookByIsbn(isbn) {
     if (!supabase) throw new Error("Supabase client not initialized.");
 
     try {
       const { data, error } = await supabase
-        .from('books')
-        .select('id')
+        .from('Books')
+        .select('*')
         .eq('isbn', isbn)
         .single();
 
@@ -67,44 +82,96 @@ export const InventoryAPI = {
     }
   },
 
-  /**
-   * Step 3: Insert hold request into Supabase 'reservations' table
-   */
-  async createReservation(reservationData) {
+  async getOrCreateCustomer(fullName, email, phone) {
     if (!supabase) throw new Error("Supabase client not initialized.");
 
     try {
+      const { data: existing, error: findError } = await supabase
+        .from('Customers')
+        .select('customer_id')
+        .eq('gmail', email) // Kept the critical 'gmail' fix
+        .maybeSingle();
+
+      if (findError) throw findError;
+      if (existing) return existing.customer_id;
+
+      const nameParts = (fullName || '').trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const newCustomerId = crypto.randomUUID();
+      const { data: created, error: createError } = await supabase
+        .from('Customers')
+        .insert([{
+          customer_id: newCustomerId,
+          first_name: firstName,
+          last_name: lastName,
+          gmail: email, // Kept the critical 'gmail' fix
+          phone: phone
+        }])
+        .select()
+        .single();
+
+      if (createError) throw createError;
+      return created.customer_id;
+    } catch (error) {
+      console.error('Supabase Error with customer lookup/creation:', error);
+      throw error;
+    }
+  },
+
+  async createReservation({ bookId, customerName, customerEmail, customerPhone, quantity = 1, regularPrice }) {
+    if (!supabase) throw new Error("Supabase client not initialized.");
+
+    try {
+      const customerId = await this.getOrCreateCustomer(customerName, customerEmail, customerPhone);
+      const purchaseId = crypto.randomUUID();
+      const today = new Date().toISOString().split('T')[0];
+
+      const purchaseData = {
+        purchase_id: purchaseId,
+        customer_id: customerId,
+        purchase_type: 'Book',
+        book_id: bookId,
+        quantity: quantity,
+        order_type: 'Pre-order',
+        status: 'Pending',
+        purchased_on: today,
+        original_unit_price: regularPrice,
+        price_paid: regularPrice,
+        discount_applied: 0,
+        points_earned: quantity,
+        receipt_number: null
+      };
+
       const { data, error } = await supabase
-        .from('reservations')
-        .insert([reservationData])
+        .from('Purchases')
+        .insert([purchaseData])
         .select()
         .single();
 
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Supabase Error creating reservation:', error);
+      console.error('Supabase Error creating purchase:', error);
       throw error;
     }
   },
 
-  /**
-   * Step 4: Check reservation status for pickup alert polling
-   */
-  async getReservationStatus(reservationId) {
+  async getReservationStatus(purchaseId) {
     if (!supabase) throw new Error("Supabase client not initialized.");
 
     try {
       const { data, error } = await supabase
-        .from('reservations')
+        .from('Purchases')
         .select('*')
-        .eq('id', reservationId)
+        .eq('purchase_id', purchaseId)
         .single();
 
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Supabase Error checking reservation status:', error);
+      console.error('Supabase Error checking status:', error);
       throw error;
     }
   }
