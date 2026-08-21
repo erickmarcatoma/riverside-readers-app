@@ -1,129 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Riverside Books | Customer Ordering & Loyalty</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="styles/main.css" />
-  <link rel="stylesheet" href="styles/components.css" />
-
-  <!-- Supabase CDN Client Library -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riverside Books - Independent & Local</title>
+  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/components.css">
 </head>
 <body>
 
-  <!-- Navigation Bar -->
+  <!-- Top Navigation -->
   <header class="navbar">
-    <div class="nav-container">
-      <a href="#" class="brand-logo">
-        <svg class="book-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-        </svg>
-        <span class="brand-name">Riverside<br><small>Books</small></span>
-      </a>
-
-      <nav class="nav-links">
-        <a href="#story">Our Story</a>
-        <a href="#recommendations">Local Recommendations</a>
-        <a href="#catalog">Search Catalog</a>
-        <a href="#loyalty">Loyalty Rewards</a>
-      </nav>
-
-      <div class="nav-actions">
-        <button class="icon-btn" id="loyalty-btn" aria-label="Loyalty Rewards">
-          🎟️ <span class="badge" id="nav-stamp-count">0/10 Stamps</span>
-        </button>
+    <div class="nav-brand">
+      <div class="logo-icon">📚🌿</div>
+      <div class="brand-text">
+        <span class="brand-title">RIVERSIDE BOOKS</span>
+        <span class="brand-subtitle">INDEPENDENT & LOCAL</span>
       </div>
+    </div>
+
+    <nav class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#">Shop Books ⌄</a>
+      <a href="#">Events</a>
+      <a href="#">Gift Cards</a>
+      <a href="#">About Us</a>
+      <a href="#">Local Picks</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="#" class="nav-icon-link">📍 Visit Us</a>
+      <a href="#" class="nav-icon-link">👤 Account</a>
+      <a href="#" class="nav-icon-link cart-link">
+        🛒 <span class="cart-badge" id="nav-stamp-count">0</span>
+      </a>
     </div>
   </header>
 
-  <!-- Hero Search Section -->
-  <section class="hero-section">
-    <div class="hero-overlay">
-      <div class="hero-card">
-        <h1>Your Neighborhood Bookstore</h1>
-        <p>Discover, Connect, and Cozy Up with a Good Read in the Heart of the Community</p>
-        <div class="hero-search-bar">
-          <input type="text" id="catalog-search-input" placeholder="Search by title, author, or ISBN..." />
-          <button id="search-btn" class="btn-primary">Explore Our Collection</button>
+  <!-- Main Dashboard Layout -->
+  <main class="dashboard-grid">
+    
+    <!-- Top Row -->
+    <section class="hero-main">
+      <div class="hero-content">
+        <h1>Your neighborhood bookstore</h1>
+        <p>Thoughtfully chosen books. Genuinely local.<br>Always welcoming.</p>
+        
+        <div class="search-bar-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search by title, author, or genre...">
+          <button class="btn-primary search-btn">Search</button>
+        </div>
+
+        <div class="hero-tags">
+          <span class="tag">🏷️ New Arrivals</span>
+          <span class="tag">⭐ Best Sellers</span>
+          <span class="tag">🌿 Local Authors</span>
+          <span class="tag">🎁 Gift Ideas</span>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Main Dashboard Container -->
-  <main class="main-container">
-    <h2 class="section-title">Catalog & Reader Rewards</h2>
+    <section class="promo-sidebar">
+      <div class="promo-text">
+        <h3>Reserve today, pick up in store.</h3>
+        <p>Pre-order books online and we'll have them ready for you.</p>
+        <button class="btn-dark">Pre-Order for Pickup 🛍️</button>
+      </div>
+      <div class="promo-steps">
+        <div class="step">📖<span>Choose your book</span></div>
+        <div class="step">🏪<span>We prepare it</span></div>
+        <div class="step">🛍️<span>Pick up in store</span></div>
+      </div>
+    </section>
 
-    <div class="dashboard-grid">
+    <!-- Middle Row -->
+    <section class="inventory-section">
+      <div class="section-header">
+        <h2>New & Noteworthy</h2>
+        <a href="#" class="view-all">View all</a>
+      </div>
+      <div id="books-container" class="book-carousel">
+        <!-- app.js will dynamically load books here -->
+      </div>
+    </section>
 
-      <!-- Column 1: Live Catalog -->
-      <section class="card-column" id="catalog">
-        <div class="column-header">
-          <div>
-            <h3>Featured Shelf Inventory</h3>
-            <p class="subtitle">Fresh Off The Shelves — Reserve for Pickup</p>
-          </div>
-          <div class="catalog-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="in-stock">In Stock</button>
-            <button class="filter-btn" data-filter="Fiction">Fiction</button>
-            <button class="filter-btn" data-filter="Non-Fiction">Non-Fiction</button>
-          </div>
+    <section class="rewards-section">
+      <div class="rewards-header">
+        <h2>Riverside Rewards 🌿</h2>
+        <p>Every purchase earns you a stamp!<br>Collect 10 stamps and get <strong>$10 off</strong> your next purchase.</p>
+      </div>
+      <div id="stamp-grid" class="stamp-grid-container">
+        <!-- app.js will dynamically load stamps here -->
+      </div>
+      <div class="rewards-footer">
+        <span id="loyalty-progress-text" class="rewards-status">Loading...</span>
+        <button class="btn-dark">View Rewards</button>
+      </div>
+    </section>
+
+    <!-- Bottom Row: Grouped correctly in a single container! -->
+    <div class="bottom-promos-row">
+      <section class="mini-promo">
+        <div class="promo-header">
+          <h4>Upcoming Author Events</h4>
+          <a href="#">View all events</a>
         </div>
-
-        <div class="books-grid" id="books-container">
-          <div class="book-card-loading">Loading live inventory...</div>
+        <div class="promo-body">
+          <p><strong>An Evening with Emily Henry</strong></p>
+          <p class="promo-meta">📅 May 24, 2026 • 7:00 PM</p>
+          <button class="btn-dark btn-small">Details</button>
         </div>
       </section>
 
-      <!-- Column 2: Reader Rewards -->
-      <section class="card-column" id="loyalty">
-        <div class="column-header">
-          <h3>Digital Reader Rewards</h3>
-          <p class="subtitle">10 Stamps = $10 Store Credit</p>
+      <section class="mini-promo">
+        <div class="promo-header">
+          <h4>Staff Picks</h4>
+          <a href="#">See all picks</a>
         </div>
-
-        <div class="loyalty-card-container">
-          <div class="stamp-grid" id="stamp-grid"></div>
-          <div class="loyalty-status">
-            <p id="loyalty-progress-text">You have 0 of 10 stamps</p>
-            <button class="btn-primary full-width" id="show-qr-btn">Show QR at Counter</button>
-          </div>
+        <div class="promo-body">
+          <p>Handpicked favorites from people who love books.</p>
+          <button class="btn-dark btn-small">Explore Picks</button>
         </div>
       </section>
 
+      <section class="mini-promo">
+        <div class="promo-header">
+          <h4>Greeting Cards</h4>
+          <a href="#">Shop all</a>
+        </div>
+        <div class="promo-body">
+          <p>Thoughtful cards for every occasion.</p>
+        </div>
+      </section>
+
+      <section class="mini-promo">
+        <div class="promo-header">
+          <h4>Local Gifts</h4>
+          <a href="#">Shop all</a>
+        </div>
+        <div class="promo-body">
+          <p>Celebrate our community with locally made gifts.</p>
+        </div>
+      </section>
     </div>
+
   </main>
 
-  <!-- Click & Collect Reservation Modal -->
-  <div class="modal-overlay hidden" id="reserve-modal">
-    <div class="modal-card">
-      <button class="close-modal" id="close-modal-btn">&times;</button>
-      <h3>Reserve Title for Pickup</h3>
-      <p id="modal-book-title" class="highlight-text">Book Title Here</p>
+  <!-- Reservation Modal -->
+  <div id="reserve-modal" class="modal hidden">
+    <div class="modal-content">
+      <button id="close-modal-btn" class="close-btn">&times;</button>
+      <h2>Reserve for Pickup</h2>
+      <h3 id="modal-book-title"></h3>
       
       <form id="reserve-form">
-        <input type="hidden" id="modal-isbn" />
-        
+        <input type="hidden" id="modal-isbn" required>
         <label for="customer-name">Full Name</label>
-        <input type="text" id="customer-name" required placeholder="Jane Doe" />
-
+        <input type="text" id="customer-name" placeholder="Jane Doe" required>
         <label for="customer-email">Email Address</label>
-        <input type="email" id="customer-email" required placeholder="jane@example.com" />
-
-        <label for="customer-phone">Phone Number</label>
-        <input type="tel" id="customer-phone" placeholder="555-0192" />
-
+        <input type="email" id="customer-email" placeholder="jane@example.com" required>
+        <label for="customer-phone">Phone Number (Optional)</label>
+        <input type="tel" id="customer-phone" placeholder="555-123-4567">
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancel</button>
+          <button type="button" id="cancel-modal-btn" class="btn-secondary">Cancel</button>
           <button type="submit" class="btn-primary">Confirm Reservation</button>
         </div>
       </form>

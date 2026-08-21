@@ -1,21 +1,21 @@
 // js/app.js - Main Application Controller
 
 import { InventoryAPI } from './api.js';
-import { initSearch } from './search.js';
-
-let currentCategory = 'all';
-let currentSearchQuery = '';
+// Note: Assuming you have a search.js handling your input listeners
+import { initSearch } from './search.js'; 
 
 document.addEventListener('DOMContentLoaded', () => {
-  initSearch((category, query) => {
-    currentCategory = category;
-    currentSearchQuery = query;
-    loadFeaturedBooks(category, query);
-  });
+  if (typeof initSearch === 'function') {
+    initSearch((category, query) => {
+      loadFeaturedBooks(category, query);
+    });
+  }
 
   initReservationForm();
   loadFeaturedBooks();
-  renderLoyaltyGrid(3);
+  
+  renderLoyaltyGrid(0); // Start with an empty grid
+  initLoyaltyCheck();   // Connect the "View Rewards" button
 });
 
 /* ----------------------------------------------------
@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
 ---------------------------------------------------- */
 async function loadFeaturedBooks(category = 'all', searchQuery = '') {
   const container = document.getElementById('books-container');
+  if (!container) return;
+  
   container.innerHTML = `<div class="book-card-loading">Searching Supabase catalog...</div>`;
 
   try {
@@ -45,11 +47,9 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
         stockText = `Only ${book.stock_quantity} left`;
       }
 
-      // Safely check for either "title" or "tittle"
       const displayTitle = book.title || book.tittle || 'Unknown Title';
       const safeTitle = displayTitle.replace(/'/g, "\\'");
       
-      // Force the fallback if the database cell is empty, has a typo, or doesn't start with 'http'
       const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
       const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
 
@@ -60,7 +60,7 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
             <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
             <p class="book-author">by ${book.author}</p>
             <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
-            <button class="btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem; margin-top: 0.3rem;" 
+            <button class="btn-primary btn-small" style="margin-top: 0.5rem;" 
               ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
               onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
               ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
@@ -85,9 +85,12 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
 ---------------------------------------------------- */
 window.openReserveModal = function(title, isbn) {
   const modal = document.getElementById('reserve-modal');
-  document.getElementById('modal-book-title').innerText = title;
-  document.getElementById('modal-isbn').value = isbn;
-  modal?.classList.remove('hidden');
+  const titleEl = document.getElementById('modal-book-title');
+  const isbnEl = document.getElementById('modal-isbn');
+  
+  if (titleEl) titleEl.innerText = title;
+  if (isbnEl) isbnEl.value = isbn;
+  if (modal) modal.classList.remove('hidden');
 };
 
 function initReservationForm() {
@@ -124,16 +127,8 @@ function initReservationForm() {
       closeModal();
       reserveForm.reset();
 
-<<<<<<< HEAD
       if (response && response.purchase_id) {
         startPickupAlertPolling(response.purchase_id);
-=======
-      // Refresh the catalog grid so the stock count reflects this reservation immediately
-      loadFeaturedBooks(currentCategory, currentSearchQuery);
-
-      if (response && response.id) {
-        startPickupAlertPolling(response.id);
->>>>>>> f8b9dd9678e21e27e1d728c80b7c51dfcc778d9e
       }
     } catch (err) {
       alert(`Unable to submit reservation: ${err.message || 'Check database permissions.'}`);
@@ -177,6 +172,34 @@ function renderLoyaltyGrid(earnedCount = 0) {
   const progressText = document.getElementById('loyalty-progress-text');
   const navBadgeText = document.getElementById('nav-stamp-count');
 
-  if (progressText) progressText.innerText = `You have ${earnedCount} of 10 stamps`;
-  if (navBadgeText) navBadgeText.innerText = `${earnedCount}/10 Stamps`;
+  if (progressText) progressText.innerText = `${earnedCount} / 10 Stamps`;
+  if (navBadgeText) navBadgeText.innerText = earnedCount;
+}
+
+/* ----------------------------------------------------
+   STEP 6: Dynamic Loyalty Lookup
+---------------------------------------------------- */
+function initLoyaltyCheck() {
+  const viewRewardsBtn = document.querySelector('.rewards-footer .btn-dark');
+  
+  if (viewRewardsBtn) {
+    viewRewardsBtn.addEventListener('click', async () => {
+      const email = prompt("Enter your email address to check your Riverside Rewards:");
+      
+      if (email && email.trim() !== "") {
+        const originalText = viewRewardsBtn.innerText;
+        viewRewardsBtn.innerText = "Checking...";
+        
+        try {
+          const points = await InventoryAPI.getCustomerLoyaltyPoints(email.trim());
+          renderLoyaltyGrid(points);
+          alert(`Success! We found ${points} stamps for ${email}.`);
+        } catch (err) {
+          alert("Unable to pull rewards data right now.");
+        } finally {
+          viewRewardsBtn.innerText = originalText;
+        }
+      }
+    });
+  }
 }
