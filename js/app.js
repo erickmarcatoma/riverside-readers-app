@@ -3,8 +3,13 @@
 import { InventoryAPI } from './api.js';
 import { initSearch } from './search.js';
 
+let currentCategory = 'all';
+let currentSearchQuery = '';
+
 document.addEventListener('DOMContentLoaded', () => {
   initSearch((category, query) => {
+    currentCategory = category;
+    currentSearchQuery = query;
     loadFeaturedBooks(category, query);
   });
 
@@ -119,8 +124,16 @@ function initReservationForm() {
       closeModal();
       reserveForm.reset();
 
+<<<<<<< HEAD
       if (response && response.purchase_id) {
         startPickupAlertPolling(response.purchase_id);
+=======
+      // Refresh the catalog grid so the stock count reflects this reservation immediately
+      loadFeaturedBooks(currentCategory, currentSearchQuery);
+
+      if (response && response.id) {
+        startPickupAlertPolling(response.id);
+>>>>>>> f8b9dd9678e21e27e1d728c80b7c51dfcc778d9e
       }
     } catch (err) {
       alert(`Unable to submit reservation: ${err.message || 'Check database permissions.'}`);
