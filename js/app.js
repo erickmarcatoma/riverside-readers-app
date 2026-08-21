@@ -1,7 +1,6 @@
 // js/app.js - Main Application Controller
 
 import { InventoryAPI } from './api.js';
-// Note: Assuming you have a search.js handling your input listeners
 import { initSearch } from './search.js'; 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,8 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initReservationForm();
   loadFeaturedBooks();
   
-  renderLoyaltyGrid(0); // Start with an empty grid
-  initLoyaltyCheck();   // Connect the "View Rewards" button
+  renderLoyaltyGrid(0); 
+  initLoyaltyCheck();   
+  initFilterTags();
 });
 
 /* ----------------------------------------------------
@@ -60,7 +60,7 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
             <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
             <p class="book-author">by ${book.author}</p>
             <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
-            <button class="btn-primary btn-small" style="margin-top: 0.5rem;" 
+            <button class="btn-dark btn-small" 
               ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
               onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
               ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
@@ -172,7 +172,7 @@ function renderLoyaltyGrid(earnedCount = 0) {
   const progressText = document.getElementById('loyalty-progress-text');
   const navBadgeText = document.getElementById('nav-stamp-count');
 
-  if (progressText) progressText.innerText = `${earnedCount} / 10 Stamps`;
+  if (progressText) progressText.innerText = `${earnedCount} / 10 Stamps collected`;
   if (navBadgeText) navBadgeText.innerText = earnedCount;
 }
 
@@ -202,4 +202,31 @@ function initLoyaltyCheck() {
       }
     });
   }
+}
+
+/* ----------------------------------------------------
+   STEP 7: Interactive Filter Tags
+---------------------------------------------------- */
+function initFilterTags() {
+  const tags = document.querySelectorAll('.tag');
+  
+  tags.forEach(tag => {
+    tag.style.cursor = 'pointer';
+    tag.addEventListener('click', () => {
+      const text = tag.innerText.toLowerCase();
+      let category = 'all';
+
+      if (text.includes('new arrivals')) {
+        category = 'all';
+      } else if (text.includes('best sellers')) {
+        category = 'bestseller';
+      } else if (text.includes('local authors')) {
+        category = 'staff-pick';
+      } else if (text.includes('gift ideas')) {
+        category = 'all'; // Fallback to full catalog so it avoids empty results
+      }
+
+      loadFeaturedBooks(category, '');
+    });
+  });
 }
