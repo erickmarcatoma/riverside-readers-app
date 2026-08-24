@@ -498,11 +498,36 @@
    MOBILE RESPONSIVE ADJUSTMENTS
 ========================================= */
 @media (max-width: 768px) {
-  /* Navbar collapsing */
-  .navbar {
-    flex-direction: column;
+  body {
+    overflow-x: hidden;
+  }
+
+  main {
     padding: 1rem !important;
-    gap: 1rem;
+  }
+
+  /* Navbar & Hamburger Dropdown */
+  .navbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem !important;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  .nav-brand {
+    flex: 1;
+  }
+
+  .mobile-menu-toggle {
+    display: inline-block !important;
+    background: var(--primary-green) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
   }
 
   .nav-links {
@@ -511,6 +536,9 @@
     width: 100%;
     text-align: center;
     gap: 0.75rem;
+    padding: 1rem 0;
+    border-top: 1px solid #eee;
+    order: 3;
   }
 
   .nav-links.mobile-open {
@@ -518,18 +546,28 @@
   }
 
   .nav-actions {
-    width: 100%;
-    justify-content: center;
+    gap: 0.75rem;
   }
 
-  /* Hero & Promo Sections */
+  .nav-actions span {
+    display: none; 
+  }
+
+  /* Force dashboard/hero and sidebar to stack vertically */
+  .dashboard-grid,
+  main div[style*="grid-template-columns"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
   .hero-main {
     padding: 2rem 1.5rem;
     min-height: auto;
   }
 
   .hero-content h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 
   .hero-tags {
@@ -555,17 +593,53 @@
     display: none;
   }
 
+  /* Shop Filter Bars & Sorting */
+  #shop-filter-buttons {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+
+  #shop-filter-buttons button {
+    width: 100%;
+    text-align: center;
+  }
+
+  #sort-select {
+    width: 100%;
+  }
+
   /* Grids and Catalogs */
   .book-carousel, 
   #full-inventory-container, 
   #local-picks-container {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-    gap: 1rem !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .book-cover {
+    height: 150px !important;
+  }
+
+  .book-card {
+    padding: 0.75rem !important;
+  }
+
+  .book-info h4 {
+    font-size: 0.85rem !important;
   }
 
   /* Modals */
   .modal-content {
     padding: 1.5rem;
     width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-carousel, 
+  #full-inventory-container, 
+  #local-picks-container {
+    grid-template-columns: 1fr !important;
   }
 }

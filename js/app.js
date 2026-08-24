@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFilterTags();
   initShopFilters(); 
   initSortHandler();
-  initMobileMenu(); // Initialize mobile navigation hamburger toggle
+  initMobileMenu(); 
 });
 
 /* ----------------------------------------------------
@@ -379,7 +379,6 @@ function initMobileMenu() {
     hamburger = document.createElement('button');
     hamburger.className = 'mobile-menu-toggle';
     hamburger.innerHTML = '☰ Menu';
-    hamburger.style.cssText = 'display: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; border: 1px solid #ccc; background: white; font-weight: 600;';
     
     navbar.insertBefore(hamburger, navLinks);
 
