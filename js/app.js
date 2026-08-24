@@ -366,7 +366,7 @@ function initSortHandler() {
 }
 
 /* ----------------------------------------------------
-   STEP 11: Mobile Navigation Menu Toggle
+   STEP 11: Mobile Navigation Menu Toggle (Mobile Viewports Only)
 ---------------------------------------------------- */
 function initMobileMenu() {
   const navbar = document.querySelector('.navbar');
@@ -375,7 +375,8 @@ function initMobileMenu() {
   let hamburger = navbar.querySelector('.mobile-menu-toggle');
   const navLinks = navbar.querySelector('.nav-links');
 
-  if (!hamburger && navLinks) {
+  // Only create/manage the hamburger if the screen is under 768px wide
+  if (!hamburger && navLinks && window.innerWidth <= 768) {
     hamburger = document.createElement('button');
     hamburger.className = 'mobile-menu-toggle';
     hamburger.innerHTML = '☰ Menu';
