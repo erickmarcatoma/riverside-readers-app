@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
    STEP 1 & 2: Search, Filter & Load Inventory
 ---------------------------------------------------- */
 async function loadFeaturedBooks(category = 'all', searchQuery = '') {
-  const container = document.getElementById('books-container');
+  const container = document.getElementById('books-container') || document.getElementById('full-inventory-container');
   if (!container) return;
   
   container.innerHTML = `<div class="book-card-loading">Searching Supabase catalog...</div>`;
@@ -223,7 +223,7 @@ function initFilterTags() {
       } else if (text.includes('local authors')) {
         category = 'staff-pick';
       } else if (text.includes('gift ideas')) {
-        category = 'all'; // Fallback to full catalog so it avoids empty results
+        category = 'all'; 
       }
 
       loadFeaturedBooks(category, '');

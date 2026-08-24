@@ -75,11 +75,34 @@
     <!-- Full Grid Inventory Container -->
     <section>
       <div id="full-inventory-container" class="book-carousel" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2rem;">
-        <!-- app.js can populate full catalog items here -->
+        <!-- app.js populates inventory items here -->
       </div>
     </section>
 
   </main>
+
+  <!-- Reservation Modal -->
+  <div id="reserve-modal" class="modal hidden">
+    <div class="modal-content">
+      <button id="close-modal-btn" class="close-btn">&times;</button>
+      <h2>Reserve for Pickup</h2>
+      <h3 id="modal-book-title"></h3>
+      
+      <form id="reserve-form">
+        <input type="hidden" id="modal-isbn" required>
+        <label for="customer-name">Full Name</label>
+        <input type="text" id="customer-name" placeholder="Jane Doe" required>
+        <label for="customer-email">Email Address</label>
+        <input type="email" id="customer-email" placeholder="jane@example.com" required>
+        <label for="customer-phone">Phone Number (Optional)</label>
+        <input type="tel" id="customer-phone" placeholder="555-123-4567">
+        <div class="modal-actions">
+          <button type="button" id="cancel-modal-btn" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm Reservation</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script type="module" src="js/app.js"></script>
 </body>
