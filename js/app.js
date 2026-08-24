@@ -3,6 +3,8 @@
 import { InventoryAPI } from './api.js';
 import { initSearch } from './search.js'; 
 
+let currentBooksCache = [];
+
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof initSearch === 'function') {
     initSearch((category, query) => {
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLoyaltyGrid(0); 
   initLoyaltyCheck();   
   initFilterTags();
+  initShopFilters(); 
+  initSortHandler();
 });
 
 /* ----------------------------------------------------
@@ -29,46 +33,9 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
 
   try {
     const books = await InventoryAPI.getBooks(category, searchQuery);
+    currentBooksCache = books || [];
 
-    if (!books || books.length === 0) {
-      container.innerHTML = `<p class="subtitle" style="padding: 1rem;">No books found matching your search criteria.</p>`;
-      return;
-    }
-
-    container.innerHTML = books.map(book => {
-      let stockBadgeClass = 'in-stock';
-      let stockText = `${book.stock_quantity} in stock`;
-
-      if (book.stock_quantity === 0) {
-        stockBadgeClass = 'out-of-stock';
-        stockText = 'Out of stock';
-      } else if (book.stock_quantity <= 2) {
-        stockBadgeClass = 'low-stock';
-        stockText = `Only ${book.stock_quantity} left`;
-      }
-
-      const displayTitle = book.title || book.tittle || 'Unknown Title';
-      const safeTitle = displayTitle.replace(/'/g, "\\'");
-      
-      const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
-      const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
-
-      return `
-        <article class="book-card" data-isbn="${book.isbn}">
-          <img src="${displayImage}" alt="${displayTitle}" class="book-cover" />
-          <div class="book-info">
-            <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
-            <p class="book-author">by ${book.author}</p>
-            <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
-            <button class="btn-dark btn-small" 
-              ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
-              onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
-              ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
-            </button>
-          </div>
-        </article>
-      `;
-    }).join('');
+    renderBookList(currentBooksCache, container);
 
   } catch (err) {
     container.innerHTML = `
@@ -78,6 +45,49 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
       </div>
     `;
   }
+}
+
+// Helper function to render book cards
+function renderBookList(books, container) {
+  if (!books || books.length === 0) {
+    container.innerHTML = `<p class="subtitle" style="padding: 1rem;">No books found matching your criteria.</p>`;
+    return;
+  }
+
+  container.innerHTML = books.map(book => {
+    let stockBadgeClass = 'in-stock';
+    let stockText = `${book.stock_quantity} in stock`;
+
+    if (book.stock_quantity === 0) {
+      stockBadgeClass = 'out-of-stock';
+      stockText = 'Out of stock';
+    } else if (book.stock_quantity <= 2) {
+      stockBadgeClass = 'low-stock';
+      stockText = `Only ${book.stock_quantity} left`;
+    }
+
+    const displayTitle = book.title || book.tittle || 'Unknown Title';
+    const safeTitle = displayTitle.replace(/'/g, "\\'");
+    
+    const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
+    const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
+
+    return `
+      <article class="book-card" data-isbn="${book.isbn}">
+        <img src="${displayImage}" alt="${displayTitle}" class="book-cover" />
+        <div class="book-info">
+          <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
+          <p class="book-author">by ${book.author}</p>
+          <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
+          <button class="btn-dark btn-small" 
+            ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+            onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
+            ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join('');
 }
 
 /* ----------------------------------------------------
@@ -205,7 +215,7 @@ function initLoyaltyCheck() {
 }
 
 /* ----------------------------------------------------
-   STEP 7: Interactive Filter Tags
+   STEP 7: Interactive Filter Tags (Home Page)
 ---------------------------------------------------- */
 function initFilterTags() {
   const tags = document.querySelectorAll('.tag');
@@ -228,5 +238,62 @@ function initFilterTags() {
 
       loadFeaturedBooks(category, '');
     });
+  });
+}
+
+/* ----------------------------------------------------
+   STEP 8: Shop Page Interactive Filter Buttons
+---------------------------------------------------- */
+function initShopFilters() {
+  const filterContainer = document.getElementById('shop-filter-buttons');
+  if (!filterContainer) return; 
+
+  const buttons = filterContainer.querySelectorAll('.filter-btn');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => {
+        b.style.background = 'white';
+        b.style.color = 'inherit';
+        b.style.borderColor = '#ccc';
+      });
+
+      btn.style.background = 'var(--primary-green)';
+      btn.style.color = 'white';
+      btn.style.borderColor = 'var(--primary-green)';
+
+      const category = btn.getAttribute('data-filter');
+      loadFeaturedBooks(category, '');
+    });
+  });
+}
+
+/* ----------------------------------------------------
+   STEP 9: Shop Page Sort Dropdown Handler
+---------------------------------------------------- */
+function initSortHandler() {
+  const sortSelect = document.getElementById('sort-select');
+  if (!sortSelect) return;
+
+  sortSelect.addEventListener('change', (e) => {
+    const sortBy = e.target.value;
+    const container = document.getElementById('books-container') || document.getElementById('full-inventory-container');
+    if (!container) return;
+
+    let sortedBooks = [...currentBooksCache];
+
+    if (sortBy === 'price-asc') {
+      sortedBooks.sort((a, b) => Number(a.regular_price || 0) - Number(b.regular_price || 0));
+    } else if (sortBy === 'price-desc') {
+      sortedBooks.sort((a, b) => Number(b.regular_price || 0) - Number(a.regular_price || 0));
+    } else if (sortBy === 'alpha') {
+      sortedBooks.sort((a, b) => {
+        const titleA = (a.title || a.tittle || '').toLowerCase();
+        const titleB = (b.title || b.tittle || '').toLowerCase();
+        return titleA.localeCompare(titleB);
+      });
+    }
+
+    renderBookList(sortedBooks, container);
   });
 }

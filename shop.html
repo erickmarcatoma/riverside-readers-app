@@ -54,20 +54,22 @@
     </div>
 
     <!-- Filter Bar Row -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: white; padding: 1rem 1.5rem; border-radius: var(--border-radius-sm); border: 1px solid #eee;">
-      <div style="display: flex; gap: 1rem; align-items: center;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: white; padding: 1rem 1.5rem; border-radius: var(--border-radius-sm); border: 1px solid #eee; flex-wrap: wrap; gap: 1rem;">
+      <div id="shop-filter-buttons" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
         <span style="font-weight: 600; font-size: 0.9rem;">Filter by:</span>
-        <button class="btn-secondary" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">All Genres</button>
-        <button class="btn-secondary" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Fiction</button>
-        <button class="btn-secondary" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Non-Fiction</button>
-        <button class="btn-secondary" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Local Interest</button>
+        <button class="filter-btn" data-filter="all" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid var(--primary-green); background: var(--primary-green); color: white; cursor: pointer;">All Genres</button>
+        <button class="filter-btn" data-filter="Fantasy" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Fantasy</button>
+        <button class="filter-btn" data-filter="Romance" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Romance</button>
+        <button class="filter-btn" data-filter="Science Fiction" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Science Fiction</button>
+        <button class="filter-btn" data-filter="Thriller" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Thriller</button>
+        <button class="filter-btn" data-filter="Memoir" style="padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid #ccc; background: white; cursor: pointer;">Memoir</button>
       </div>
       <div>
-        <select style="padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid #ccc; outline: none; background: white;">
-          <option>Sort by: Featured</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
-          <option>Alphabetical (A-Z)</option>
+        <select id="sort-select" style="padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid #ccc; outline: none; background: white; cursor: pointer;">
+          <option value="featured">Sort by: Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="alpha">Alphabetical (A-Z)</option>
         </select>
       </div>
     </div>
