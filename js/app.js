@@ -14,13 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initReservationForm();
   loadFeaturedBooks();
-  loadStaffPicks(); // Automatically runs if #local-picks-container exists
+  loadStaffPicks(); 
   
   renderLoyaltyGrid(0); 
   initLoyaltyCheck();   
   initFilterTags();
   initShopFilters(); 
   initSortHandler();
+  initMobileMenu(); // Initialize mobile navigation hamburger toggle
 });
 
 /* ----------------------------------------------------
@@ -362,4 +363,28 @@ function initSortHandler() {
 
     renderBookList(sortedBooks, container);
   });
+}
+
+/* ----------------------------------------------------
+   STEP 11: Mobile Navigation Menu Toggle
+---------------------------------------------------- */
+function initMobileMenu() {
+  const navbar = document.querySelector('.navbar');
+  if (!navbar) return;
+
+  let hamburger = navbar.querySelector('.mobile-menu-toggle');
+  const navLinks = navbar.querySelector('.nav-links');
+
+  if (!hamburger && navLinks) {
+    hamburger = document.createElement('button');
+    hamburger.className = 'mobile-menu-toggle';
+    hamburger.innerHTML = '☰ Menu';
+    hamburger.style.cssText = 'display: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; border: 1px solid #ccc; background: white; font-weight: 600;';
+    
+    navbar.insertBefore(hamburger, navLinks);
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('mobile-open');
+    });
+  }
 }

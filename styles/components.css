@@ -493,3 +493,79 @@
 .modal-actions .btn-primary:hover {
   background: #172d1f;
 }
+
+/* =========================================
+   MOBILE RESPONSIVE ADJUSTMENTS
+========================================= */
+@media (max-width: 768px) {
+  /* Navbar collapsing */
+  .navbar {
+    flex-direction: column;
+    padding: 1rem !important;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    display: none; 
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .nav-links.mobile-open {
+    display: flex;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Hero & Promo Sections */
+  .hero-main {
+    padding: 2rem 1.5rem;
+    min-height: auto;
+  }
+
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tag-divider {
+    display: none;
+  }
+
+  .promo-sidebar {
+    padding: 2rem 1.5rem;
+  }
+
+  .promo-steps {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .step-divider {
+    display: none;
+  }
+
+  /* Grids and Catalogs */
+  .book-carousel, 
+  #full-inventory-container, 
+  #local-picks-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  /* Modals */
+  .modal-content {
+    padding: 1.5rem;
+    width: 95%;
+  }
+}
