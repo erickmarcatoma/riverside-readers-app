@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initShopFilters(); 
   initSortHandler();
   initMobileMenu(); 
+  initNavbarActions(); // Initialize functional Account and Cart buttons
 });
 
 /* ----------------------------------------------------
@@ -375,7 +376,6 @@ function initMobileMenu() {
   let hamburger = navbar.querySelector('.mobile-menu-toggle');
   const navLinks = navbar.querySelector('.nav-links');
 
-  // Only create/manage the hamburger if the screen is under 768px wide
   if (!hamburger && navLinks && window.innerWidth <= 768) {
     hamburger = document.createElement('button');
     hamburger.className = 'mobile-menu-toggle';
@@ -387,4 +387,32 @@ function initMobileMenu() {
       navLinks.classList.toggle('mobile-open');
     });
   }
+}
+
+/* ----------------------------------------------------
+   STEP 12: Interactive Account & Cart Navigation Handlers
+---------------------------------------------------- */
+function initNavbarActions() {
+  const accountBtn = document.getElementById('account-link');
+  const cartBtn = document.getElementById('cart-link');
+
+  accountBtn?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = prompt("Enter your account email to view your Loyalty Profile & Stamps:");
+    if (!email || email.trim() === "") return;
+
+    try {
+      const points = await InventoryAPI.getCustomerLoyaltyPoints(email.trim());
+      renderLoyaltyGrid(points);
+      alert(`Account Found!\nEmail: ${email.trim()}\nLoyalty Stamps: ${points} / 10 collected towards your reward.`);
+    } catch (err) {
+      alert("Could not retrieve account details. Please check the email address.");
+    }
+  });
+
+  cartBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const currentStamps = document.getElementById('nav-stamp-count')?.innerText || '0';
+    alert(`Pre-Order & Pickup Cart:\n- Active Pickup Hold: Ready via counter verification\n- Loyalty Progress: ${currentStamps} stamps earned`);
+  });
 }
