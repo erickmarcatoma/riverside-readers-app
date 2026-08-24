@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initReservationForm();
   loadFeaturedBooks();
+  loadStaffPicks(); // Automatically runs if #local-picks-container exists
   
   renderLoyaltyGrid(0); 
   initLoyaltyCheck();   
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ----------------------------------------------------
-   STEP 1 & 2: Search, Filter & Load Inventory
+   STEP 1 & 2: Search, Filter & Load Inventory (Home & Shop)
 ---------------------------------------------------- */
 async function loadFeaturedBooks(category = 'all', searchQuery = '') {
   const container = document.getElementById('books-container') || document.getElementById('full-inventory-container');
@@ -41,6 +42,71 @@ async function loadFeaturedBooks(category = 'all', searchQuery = '') {
     container.innerHTML = `
       <div style="padding: 1rem; color: #c62828; background: #ffebee; border-radius: 8px;">
         <strong>Database Search Error:</strong>
+        <p style="font-size: 0.85rem; margin-top: 0.25rem;">${err.message || err}</p>
+      </div>
+    `;
+  }
+}
+
+/* ----------------------------------------------------
+   STEP 10: Local Picks & Staff Favorites Loader
+---------------------------------------------------- */
+async function loadStaffPicks() {
+  const container = document.getElementById('local-picks-container');
+  if (!container) return;
+  
+  container.innerHTML = `<div class="book-card-loading">Loading staff recommendations from Supabase...</div>`;
+
+  try {
+    const books = await InventoryAPI.getBooks('staff-pick', ''); 
+
+    if (!books || books.length === 0) {
+      container.innerHTML = `<p class="subtitle" style="padding: 1rem;">No staff picks currently available. Check back soon!</p>`;
+      return;
+    }
+
+    container.innerHTML = books.map(book => {
+      let stockBadgeClass = 'in-stock';
+      let stockText = `${book.stock_quantity} in stock`;
+
+      if (book.stock_quantity === 0) {
+        stockBadgeClass = 'out-of-stock';
+        stockText = 'Out of stock';
+      } else if (book.stock_quantity <= 2) {
+        stockBadgeClass = 'low-stock';
+        stockText = `Only ${book.stock_quantity} left`;
+      }
+
+      const displayTitle = book.title || book.tittle || 'Unknown Title';
+      const safeTitle = displayTitle.replace(/'/g, "\\'");
+      
+      const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
+      const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
+
+      const staffBlurb = book.blurb ? `<p style="font-size: 0.85rem; color: #666; font-style: italic; margin: 0.5rem 0;">"${book.blurb}"</p>` : '';
+
+      return `
+        <article class="book-card" data-isbn="${book.isbn}">
+          <img src="${displayImage}" alt="${displayTitle}" class="book-cover" />
+          <div class="book-info">
+            <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
+            <p class="book-author">by ${book.author}</p>
+            ${staffBlurb}
+            <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
+            <button class="btn-dark btn-small" 
+              ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+              onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
+              ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
+            </button>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+  } catch (err) {
+    container.innerHTML = `
+      <div style="padding: 1rem; color: #c62828; background: #ffebee; border-radius: 8px;">
+        <strong>Error loading staff picks:</strong>
         <p style="font-size: 0.85rem; margin-top: 0.25rem;">${err.message || err}</p>
       </div>
     `;
