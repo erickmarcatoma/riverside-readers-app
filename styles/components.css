@@ -319,6 +319,13 @@
   border: 1px solid #eee;
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.book-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .book-cover {
@@ -331,7 +338,7 @@
 
 .book-info h4 { font-size: 0.95rem; line-height: 1.2; margin-bottom: 0.2rem; }
 .book-author { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-.book-price { font-weight: 600; margin-bottom: 0.5rem; }
+.book-price { font-weight: 600; margin-bottom: 0.5rem; margin-top: auto; }
 .stock-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
 
 .rewards-section {

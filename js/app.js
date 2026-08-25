@@ -89,10 +89,11 @@ async function loadStaffPicks() {
 
       return `
         <article class="book-card" data-isbn="${book.isbn}">
-          <div class="book-cover-mockup" style="background-color: ${bgColor};">
-            <span class="mockup-genre">${book.genre || 'Staff Pick'}</span>
-            <h3 class="mockup-title">${displayTitle}</h3>
-            <span class="mockup-author">by ${book.author}</span>
+          <div class="book-cover-mockup" style="background-color: ${bgColor}; height: 140px; display: flex; align-items: center; justify-content: center;">
+            <div style="text-align: center; color: white;">
+              <i class="fa-solid fa-book-open" style="font-size: 1.75rem; opacity: 0.8; margin-bottom: 0.4rem; display: block;"></i>
+              <span class="mockup-genre" style="font-size: 0.75rem; letter-spacing: 2px;">${book.genre || 'Staff Pick'}</span>
+            </div>
           </div>
           <div class="book-info">
             <h4>${displayTitle}</h4>
@@ -102,12 +103,16 @@ async function loadStaffPicks() {
             </div>
             <p class="book-author">by ${book.author}</p>
             ${staffBlurb}
-            <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
-            <button class="btn-dark btn-small" 
-              ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
-              onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
-              ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
-            </button>
+            
+            <!-- Price and Button Wrapper aligned uniformly at the bottom -->
+            <div style="margin-top: auto; padding-top: 0.75rem;">
+              <p class="book-price" style="margin-bottom: 0.5rem; font-weight: bold;">$${Number(book.regular_price || 0).toFixed(2)}</p>
+              <button class="btn-dark btn-small" style="width: 100%;"
+                ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+                onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
+                ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
+              </button>
+            </div>
           </div>
         </article>
       `;
@@ -150,10 +155,11 @@ function renderBookList(books, container) {
 
     return `
       <article class="book-card" data-isbn="${book.isbn}">
-        <div class="book-cover-mockup" style="background-color: ${bgColor};">
-          <span class="mockup-genre">${book.genre || 'Literature'}</span>
-          <h3 class="mockup-title">${displayTitle}</h3>
-          <span class="mockup-author">by ${book.author}</span>
+        <div class="book-cover-mockup" style="background-color: ${bgColor}; height: 140px; display: flex; align-items: center; justify-content: center;">
+          <div style="text-align: center; color: white;">
+            <i class="fa-solid fa-book-open" style="font-size: 1.75rem; opacity: 0.8; margin-bottom: 0.4rem; display: block;"></i>
+            <span class="mockup-genre" style="font-size: 0.75rem; letter-spacing: 2px;">${book.genre || 'Literature'}</span>
+          </div>
         </div>
         <div class="book-info">
           <h4>${displayTitle}</h4>
@@ -162,12 +168,16 @@ function renderBookList(books, container) {
             <span>${stockText}</span>
           </div>
           <p class="book-author">by ${book.author}</p>
-          <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
-          <button class="btn-dark btn-small" 
-            ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
-            onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
-            ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
-          </button>
+          
+          <!-- Price and Button Wrapper aligned uniformly at the bottom -->
+          <div style="margin-top: auto; padding-top: 0.75rem;">
+            <p class="book-price" style="margin-bottom: 0.5rem; font-weight: bold;">$${Number(book.regular_price || 0).toFixed(2)}</p>
+            <button class="btn-dark btn-small" style="width: 100%;"
+              ${book.stock_quantity === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+              onclick="openReserveModal('${safeTitle}', '${book.isbn}')">
+              ${book.stock_quantity === 0 ? 'Unavailable' : 'Reserve for Pickup'}
+            </button>
+          </div>
         </div>
       </article>
     `;
