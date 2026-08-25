@@ -259,11 +259,34 @@
 /* =========================================
    MIDDLE SECTIONS (Inventory & Rewards)
 ========================================= */
-.section-header, .rewards-header {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 1.5rem;
+}
+
+/* Fixed Rewards Header Layout */
+.rewards-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.rewards-header h2 {
+  font-size: 1.8rem;
+  color: var(--primary-green);
+  line-height: 1.2;
+}
+
+.rewards-header p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: left;
+  line-height: 1.4;
 }
 
 .view-all {
@@ -302,46 +325,50 @@
 .stock-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; }
 
 .rewards-section {
-  background: #e6e9e1;
+  background: #f0f4f1;
   border-radius: var(--border-radius-lg);
   padding: 2.5rem;
   border: 1px solid #d5dad0;
 }
 
+/* Stamp Grid: Strict 5x2 layout */
 .stamp-grid-container {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
   background: white;
   padding: 1.5rem;
-  border-radius: 30px;
-  margin: 1.5rem 0;
-  justify-content: center;
+  border-radius: 16px;
+  margin: 1.5rem auto;
+  max-width: 420px;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .stamp-slot {
-  width: 45px; height: 45px;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: #f8f8f6;
-  border: 1px solid #e0e0e0;
+  border: 2px dashed #cbd5e0;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: bold;
-  color: #bbb;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #a0aec0;
+  background: #f8fafc;
 }
 
 .stamp-slot.earned {
-  background: var(--accent-orange);
-  color: white;
-  border: none;
+  border: 2px solid var(--primary-green);
+  background: #e6f4ea;
+  color: var(--primary-green);
 }
 
 .rewards-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
 .rewards-status { color: var(--accent-orange); font-weight: 600; }

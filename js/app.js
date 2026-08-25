@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initShopFilters(); 
   initSortHandler();
   initMobileMenu(); 
-  initNavbarActions(); // Initialize functional Account and Cart buttons
+  initNavbarActions();
 });
 
 /* ----------------------------------------------------
@@ -243,7 +243,7 @@ function renderLoyaltyGrid(earnedCount = 0) {
   for (let i = 1; i <= 10; i++) {
     const slot = document.createElement('div');
     slot.className = `stamp-slot ${i <= earnedCount ? 'earned' : ''}`;
-    slot.innerHTML = i <= earnedCount ? '📚' : i;
+    slot.innerHTML = i <= earnedCount ? '✓' : i;
     grid.appendChild(slot);
   }
 
@@ -259,25 +259,11 @@ function renderLoyaltyGrid(earnedCount = 0) {
 ---------------------------------------------------- */
 function initLoyaltyCheck() {
   const viewRewardsBtn = document.querySelector('.rewards-footer .btn-dark');
+  const accountModal = document.getElementById('account-modal');
   
   if (viewRewardsBtn) {
-    viewRewardsBtn.addEventListener('click', async () => {
-      const email = prompt("Enter your email address to check your Riverside Rewards:");
-      
-      if (email && email.trim() !== "") {
-        const originalText = viewRewardsBtn.innerText;
-        viewRewardsBtn.innerText = "Checking...";
-        
-        try {
-          const points = await InventoryAPI.getCustomerLoyaltyPoints(email.trim());
-          renderLoyaltyGrid(points);
-          alert(`Success! We found ${points} stamps for ${email}.`);
-        } catch (err) {
-          alert("Unable to pull rewards data right now.");
-        } finally {
-          viewRewardsBtn.innerText = originalText;
-        }
-      }
+    viewRewardsBtn.addEventListener('click', () => {
+      accountModal?.classList.remove('hidden');
     });
   }
 }
@@ -390,29 +376,65 @@ function initMobileMenu() {
 }
 
 /* ----------------------------------------------------
-   STEP 12: Interactive Account & Cart Navigation Handlers
+   STEP 12: Interactive Account Modal & Cart Handlers
 ---------------------------------------------------- */
 function initNavbarActions() {
   const accountBtn = document.getElementById('account-link');
   const cartBtn = document.getElementById('cart-link');
+  
+  const accountModal = document.getElementById('account-modal');
+  const closeAccountModalBtn = document.getElementById('close-account-modal');
+  const accountForm = document.getElementById('account-form');
+  const accountLoginView = document.getElementById('account-login-view');
+  const accountProfileView = document.getElementById('account-profile-view');
+  const profileDisplayEmail = document.getElementById('profile-display-email');
+  const profileStampSummary = document.getElementById('profile-stamp-summary');
+  const logoutBtn = document.getElementById('logout-account-btn');
 
-  accountBtn?.addEventListener('click', async (e) => {
+  const closeAccountModal = () => accountModal?.classList.add('hidden');
+  closeAccountModalBtn?.addEventListener('click', closeAccountModal);
+
+  accountBtn?.addEventListener('click', (e) => {
     e.preventDefault();
-    const email = prompt("Enter your account email to view your Loyalty Profile & Stamps:");
-    if (!email || email.trim() === "") return;
+    accountModal?.classList.remove('hidden');
+  });
+
+  accountForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const emailInput = document.getElementById('account-email-input').value.trim();
+    if (!emailInput) return;
 
     try {
-      const points = await InventoryAPI.getCustomerLoyaltyPoints(email.trim());
+      const submitBtn = accountForm.querySelector('button[type="submit"]');
+      submitBtn.innerText = "Loading...";
+
+      const points = await InventoryAPI.getCustomerLoyaltyPoints(emailInput);
+      
+      profileDisplayEmail.innerText = emailInput;
+      profileStampSummary.innerText = `${points} / 10 Stamps collected towards your reward`;
+      
+      // Update main dashboard stamp grid and badge instantly
       renderLoyaltyGrid(points);
-      alert(`Account Found!\nEmail: ${email.trim()}\nLoyalty Stamps: ${points} / 10 collected towards your reward.`);
+
+      accountLoginView.classList.add('hidden');
+      accountProfileView.classList.remove('hidden');
+      submitBtn.innerText = "View Profile";
     } catch (err) {
-      alert("Could not retrieve account details. Please check the email address.");
+      alert("Could not find an account associated with this email.");
+      accountForm.querySelector('button[type="submit"]').innerText = "View Profile";
     }
+  });
+
+  logoutBtn?.addEventListener('click', () => {
+    accountProfileView.classList.add('hidden');
+    accountLoginView.classList.remove('hidden');
+    document.getElementById('account-email-input').value = '';
+    renderLoyaltyGrid(0); // Reset main grid back to 0
   });
 
   cartBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     const currentStamps = document.getElementById('nav-stamp-count')?.innerText || '0';
-    alert(`Pre-Order & Pickup Cart:\n- Active Pickup Hold: Ready via counter verification\n- Loyalty Progress: ${currentStamps} stamps earned`);
+    alert(`Pre-Order & Pickup Cart Summary:\n- Active Status: Ready for counter verification\n- Rewards Progress: ${currentStamps} stamps earned`);
   });
 }

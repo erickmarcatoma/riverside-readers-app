@@ -23,7 +23,6 @@ export const InventoryAPI = {
         query = query.eq('genre', category);
       }
 
-      // Fixed: Removed isbn from ilike query since isbn is stored as a bigint (number) column
       if (searchQuery) {
         query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
       }
@@ -84,10 +83,12 @@ export const InventoryAPI = {
     if (!supabase) throw new Error("Supabase client not initialized.");
 
     try {
+      const cleanEmail = (email || '').trim().toLowerCase();
+
       const { data: existing, error: findError } = await supabase
         .from('Customers')
         .select('customer_id')
-        .eq('gmail', email) 
+        .eq('email', cleanEmail) 
         .maybeSingle();
 
       if (findError) throw findError;
@@ -104,8 +105,9 @@ export const InventoryAPI = {
           customer_id: newCustomerId,
           first_name: firstName,
           last_name: lastName,
-          gmail: email,
-          phone: phone
+          email: cleanEmail,
+          phone: phone,
+          stamp_count: 0
         }])
         .select()
         .single();
@@ -178,25 +180,19 @@ export const InventoryAPI = {
     if (!supabase) throw new Error("Supabase client not initialized.");
 
     try {
+      const cleanEmail = (email || '').trim().toLowerCase();
+
       const { data: customer, error: customerError } = await supabase
         .from('Customers')
-        .select('customer_id')
-        .eq('gmail', email)
+        .select('stamp_count')
+        .eq('email', cleanEmail)
         .maybeSingle();
 
       if (customerError) throw customerError;
       if (!customer) return 0;
 
-      const { data: purchases, error: purchasesError } = await supabase
-        .from('Purchases')
-        .select('points_earned')
-        .eq('customer_id', customer.customer_id);
-
-      if (purchasesError) throw purchasesError;
-
-      const totalPoints = purchases.reduce((sum, record) => sum + (record.points_earned || 0), 0);
-      
-      return totalPoints > 10 ? 10 : totalPoints;
+      // Directly return the stamp_count from the customer record
+      return customer.stamp_count ?? 0;
 
     } catch (error) {
       console.error('Supabase Error fetching loyalty points:', error);
