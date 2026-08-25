@@ -102,34 +102,38 @@
     </div>
   </div>
 
-  <!-- ACCOUNT & LOYALTY PROFILE MODAL -->
+<!-- ACCOUNT & LOYALTY PROFILE MODAL -->
   <div id="account-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content account-modal-content">
       <button class="close-btn" id="close-account-modal">&times;</button>
       <h2>My Account</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+      <p class="modal-subtitle">
         Manage your Riverside Rewards and order tracking.
       </p>
 
+      <!-- Login View -->
       <div id="account-login-view">
         <form id="account-form">
-          <label for="account-email-input">Email Address</label>
-          <input type="email" id="account-email-input" placeholder="Enter your email" required />
+          <div class="form-group">
+            <label for="account-email-input">Email Address</label>
+            <input type="email" id="account-email-input" placeholder="Enter your email" required />
+          </div>
           <div class="modal-actions">
             <button type="submit" class="btn-primary">View Profile</button>
           </div>
         </form>
       </div>
 
-      <div id="account-profile-view" class="hidden" style="margin-top: 1rem;">
-        <div style="background: #f8f8f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #e0e0e0;">
-          <p style="font-size: 0.85rem; color: #666;">Logged in as:</p>
-          <strong id="profile-display-email" style="font-size: 0.95rem; color: var(--primary-green);"></strong>
+      <!-- Profile View (Hidden by default) -->
+      <div id="account-profile-view" class="hidden">
+        <div class="profile-badge-box">
+          <span class="profile-label">Logged in as:</span>
+          <strong id="profile-display-email"></strong>
         </div>
 
-        <div style="margin-bottom: 1.5rem;">
-          <h4 style="font-size: 1rem; margin-bottom: 0.5rem;">Loyalty Status</h4>
-          <p id="profile-stamp-summary" style="font-size: 0.9rem; font-weight: 600; color: var(--accent-orange);">0 / 10 Stamps collected</p>
+        <div class="loyalty-status-box">
+          <h4>Loyalty Status</h4>
+          <p id="profile-stamp-summary" class="stamp-summary-text">0 / 10 Stamps collected</p>
         </div>
 
         <div class="modal-actions">
@@ -138,7 +142,7 @@
       </div>
     </div>
   </div>
-
+  
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
