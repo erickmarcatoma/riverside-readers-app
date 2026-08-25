@@ -611,6 +611,58 @@
 }
 
 /* =========================================
+   COLORED BOOK COVER MOCKUPS
+========================================= */
+.book-cover-mockup {
+  width: 100%;
+  height: 220px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  padding: 1.5rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+  box-shadow: inset -6px 0 12px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.book-cover-mockup::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 12px; height: 100%;
+  background: linear-gradient(90deg, rgba(0,0,0,0.2), transparent);
+}
+
+.mockup-genre {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+.mockup-title {
+  font-family: serif;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  color: white;
+  font-weight: 700;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mockup-author {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  font-style: italic;
+}
+
+/* =========================================
    MOBILE RESPONSIVE ADJUSTMENTS
 ========================================= */
 @media (max-width: 768px) {

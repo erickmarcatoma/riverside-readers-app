@@ -67,7 +67,9 @@ async function loadStaffPicks() {
       return;
     }
 
-    container.innerHTML = books.map(book => {
+    const coverColors = ['#24422e', '#a84832', '#1e3a5f', '#8c5e3c', '#5c3d52', '#2b4c5f'];
+
+    container.innerHTML = books.map((book, index) => {
       let stockBadgeClass = 'in-stock';
       let stockText = `${book.stock_quantity} in stock`;
 
@@ -81,15 +83,16 @@ async function loadStaffPicks() {
 
       const displayTitle = book.title || book.tittle || 'Unknown Title';
       const safeTitle = displayTitle.replace(/'/g, "\\'");
-      
-      const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
-      const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
-
+      const bgColor = coverColors[index % coverColors.length];
       const staffBlurb = book.blurb ? `<p style="font-size: 0.85rem; color: #666; font-style: italic; margin: 0.5rem 0;">"${book.blurb}"</p>` : '';
 
       return `
         <article class="book-card" data-isbn="${book.isbn}">
-          <img src="${displayImage}" alt="${displayTitle}" class="book-cover" />
+          <div class="book-cover-mockup" style="background-color: ${bgColor};">
+            <span class="mockup-genre">${book.genre || 'Staff Pick'}</span>
+            <h3 class="mockup-title">${displayTitle}</h3>
+            <span class="mockup-author">by ${book.author}</span>
+          </div>
           <div class="book-info">
             <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
             <p class="book-author">by ${book.author}</p>
@@ -115,14 +118,16 @@ async function loadStaffPicks() {
   }
 }
 
-// Helper function to render book cards
+// Helper function to render book cards with unique colored covers
 function renderBookList(books, container) {
   if (!books || books.length === 0) {
     container.innerHTML = `<p class="subtitle" style="padding: 1rem;">No books found matching your criteria.</p>`;
     return;
   }
 
-  container.innerHTML = books.map(book => {
+  const coverColors = ['#24422e', '#a84832', '#1e3a5f', '#8c5e3c', '#5c3d52', '#2b4c5f'];
+
+  container.innerHTML = books.map((book, index) => {
     let stockBadgeClass = 'in-stock';
     let stockText = `${book.stock_quantity} in stock`;
 
@@ -136,13 +141,15 @@ function renderBookList(books, container) {
 
     const displayTitle = book.title || book.tittle || 'Unknown Title';
     const safeTitle = displayTitle.replace(/'/g, "\\'");
-    
-    const isValidUrl = book.cover_image_url && book.cover_image_url.startsWith('http');
-    const displayImage = isValidUrl ? book.cover_image_url : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop';
+    const bgColor = coverColors[index % coverColors.length];
 
     return `
       <article class="book-card" data-isbn="${book.isbn}">
-        <img src="${displayImage}" alt="${displayTitle}" class="book-cover" />
+        <div class="book-cover-mockup" style="background-color: ${bgColor};">
+          <span class="mockup-genre">${book.genre || 'Literature'}</span>
+          <h3 class="mockup-title">${displayTitle}</h3>
+          <span class="mockup-author">by ${book.author}</span>
+        </div>
         <div class="book-info">
           <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
           <p class="book-author">by ${book.author}</p>
@@ -413,7 +420,6 @@ function initNavbarActions() {
       profileDisplayEmail.innerText = emailInput;
       profileStampSummary.innerText = `${points} / 10 Stamps collected towards your reward`;
       
-      // Update main dashboard stamp grid and badge instantly
       renderLoyaltyGrid(points);
 
       accountLoginView.classList.add('hidden');
@@ -429,7 +435,7 @@ function initNavbarActions() {
     accountProfileView.classList.add('hidden');
     accountLoginView.classList.remove('hidden');
     document.getElementById('account-email-input').value = '';
-    renderLoyaltyGrid(0); // Reset main grid back to 0
+    renderLoyaltyGrid(0);
   });
 
   cartBtn?.addEventListener('click', (e) => {
