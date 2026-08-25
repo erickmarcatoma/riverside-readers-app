@@ -71,15 +71,15 @@ async function loadStaffPicks() {
     const coverColors = ['#24422e', '#a84832', '#1e3a5f', '#8c5e3c', '#5c3d52', '#2b4c5f'];
 
     container.innerHTML = books.map((book, index) => {
-      let stockBadgeClass = 'in-stock';
       let stockText = `${book.stock_quantity} in stock`;
+      let dotColor = '#2F855A'; // Soft green for normal stock
 
       if (book.stock_quantity === 0) {
-        stockBadgeClass = 'out-of-stock';
         stockText = 'Out of stock';
+        dotColor = '#A0AEC0'; // Muted grey for out of stock
       } else if (book.stock_quantity <= 2) {
-        stockBadgeClass = 'low-stock';
         stockText = `Only ${book.stock_quantity} left`;
+        dotColor = '#DD6B20'; // Orange for low stock
       }
 
       const displayTitle = book.title || book.tittle || 'Unknown Title';
@@ -95,7 +95,11 @@ async function loadStaffPicks() {
             <span class="mockup-author">by ${book.author}</span>
           </div>
           <div class="book-info">
-            <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
+            <h4>${displayTitle}</h4>
+            <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4a5568; margin: 0.25rem 0 0.5rem 0;">
+              <span style="width: 8px; height: 8px; background-color: ${dotColor}; border-radius: 50%; display: inline-block;"></span>
+              <span>${stockText}</span>
+            </div>
             <p class="book-author">by ${book.author}</p>
             ${staffBlurb}
             <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
@@ -129,15 +133,15 @@ function renderBookList(books, container) {
   const coverColors = ['#24422e', '#a84832', '#1e3a5f', '#8c5e3c', '#5c3d52', '#2b4c5f'];
 
   container.innerHTML = books.map((book, index) => {
-    let stockBadgeClass = 'in-stock';
     let stockText = `${book.stock_quantity} in stock`;
+    let dotColor = '#2F855A'; // Soft green for normal stock
 
     if (book.stock_quantity === 0) {
-      stockBadgeClass = 'out-of-stock';
       stockText = 'Out of stock';
+      dotColor = '#A0AEC0'; // Muted grey for out of stock
     } else if (book.stock_quantity <= 2) {
-      stockBadgeClass = 'low-stock';
       stockText = `Only ${book.stock_quantity} left`;
+      dotColor = '#DD6B20'; // Orange for low stock
     }
 
     const displayTitle = book.title || book.tittle || 'Unknown Title';
@@ -152,7 +156,11 @@ function renderBookList(books, container) {
           <span class="mockup-author">by ${book.author}</span>
         </div>
         <div class="book-info">
-          <h4>${displayTitle} <span class="stock-badge ${stockBadgeClass}">${stockText}</span></h4>
+          <h4>${displayTitle}</h4>
+          <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4a5568; margin: 0.25rem 0 0.5rem 0;">
+            <span style="width: 8px; height: 8px; background-color: ${dotColor}; border-radius: 50%; display: inline-block;"></span>
+            <span>${stockText}</span>
+          </div>
           <p class="book-author">by ${book.author}</p>
           <p class="book-price">$${Number(book.regular_price || 0).toFixed(2)}</p>
           <button class="btn-dark btn-small" 
