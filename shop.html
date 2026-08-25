@@ -30,11 +30,11 @@
     </nav>
 
     <div class="nav-actions">
-      <a href="#" class="nav-icon-link">
+      <a href="#" id="account-link" class="nav-icon-link">
         <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Account</span>
       </a>
-      <a href="#" class="nav-icon-link cart-link">
+      <a href="#" id="cart-link" class="nav-icon-link cart-link">
         <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         <span class="cart-badge" id="nav-stamp-count">0</span>
       </a>
@@ -99,6 +99,43 @@
           <button type="submit" class="btn-primary">Confirm Reservation</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ACCOUNT & LOYALTY PROFILE MODAL -->
+  <div id="account-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close-btn" id="close-account-modal">&times;</button>
+      <h2>My Account</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        Manage your Riverside Rewards and order tracking.
+      </p>
+
+      <div id="account-login-view">
+        <form id="account-form">
+          <label for="account-email-input">Email Address</label>
+          <input type="email" id="account-email-input" placeholder="Enter your email" required />
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary">View Profile</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="account-profile-view" class="hidden" style="margin-top: 1rem;">
+        <div style="background: #f8f8f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #e0e0e0;">
+          <p style="font-size: 0.85rem; color: #666;">Logged in as:</p>
+          <strong id="profile-display-email" style="font-size: 0.95rem; color: var(--primary-green);"></strong>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-size: 1rem; margin-bottom: 0.5rem;">Loyalty Status</h4>
+          <p id="profile-stamp-summary" style="font-size: 0.9rem; font-weight: 600; color: var(--accent-orange);">0 / 10 Stamps collected</p>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="logout-account-btn" class="btn-secondary">Switch Account</button>
+        </div>
+      </div>
     </div>
   </div>
 
