@@ -30,56 +30,79 @@
 </head>
 <body class="flex min-h-screen bg-[#FBF9F5]">
 
-  <!-- Sidebar Template Integration with Collapse Functionality -->
-  <aside id="app-sidebar" class="w-64 bg-[#1B3B2B] text-[#FBF9F5] flex flex-col shadow-xl transition-all duration-300 relative">
-    <!-- Sidebar Header -->
-    <div class="p-4 border-b border-[#152A1F]">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3 sidebar-brand-content">
-          <button id="sidebar-toggle-btn" class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-[#152A1F] transition cursor-pointer" title="Toggle sidebar">
-            <img src="riversidelogo.png" alt="Riverside Books Logo" class="w-10 h-10 rounded-lg object-contain" />
-          </button>
-          <div class="sidebar-text-label">
-            <h2 class="font-serif text-lg font-bold text-[#FBF9F5]">Riverside Books</h2>
-          </div>
-        </div>
-        <!-- Close button visible when expanded -->
-        <button id="sidebar-close-btn" class="text-[#7A8B79] hover:text-[#FBF9F5] transition p-1" title="Close sidebar">
+  <!-- Custom Portal Sidebar Integration -->
+  <aside id="app-sidebar" class="w-72 bg-[#1B3B2B] text-[#FBF9F5] flex flex-col shadow-xl transition-all duration-300 relative flex-shrink-0">
+    
+    <!-- Top Brand Header Area -->
+    <div class="p-6 border-b border-[#152A1F] text-center bg-[#FBF9F5] text-[#1B3B2B] relative">
+      <div class="flex items-center justify-between absolute top-4 right-4">
+        <button id="sidebar-close-btn" class="text-[#7A8B79] hover:text-[#1B3B2B] transition p-1" title="Close sidebar">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
+      <button id="sidebar-toggle-btn" class="w-full flex flex-col items-center cursor-pointer group border-none bg-transparent" title="Toggle sidebar">
+        <img src="icon.png" alt="Riverside Books Logo" class="w-14 h-14 object-contain mb-2" />
+        <h2 class="font-serif text-base font-bold tracking-wider text-[#1B3B2B] m-0">RIVERSIDE BOOKS</h2>
+        <span class="text-[0.65rem] tracking-widest text-[#7A8B79] uppercase font-semibold">INDEPENDENT & LOCAL</span>
+      </button>
     </div>
 
-    <!-- Navigation Links -->
-    <nav class="sidebar-nav flex-1 p-4 space-y-2">
-      <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#152A1F] transition text-[#7A8B79] hover:text-[#FBF9F5]" title="Home Page">
-        <i class="fa-solid fa-home text-[#2D6A6F] text-lg"></i>
-        <span class="font-medium sidebar-text-label">Home Page</span>
-      </a>
-      <a href="shop.html" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#2D6A6F]/20 text-[#FBF9F5] border border-[#2D6A6F]/40" title="Customer Ordering and Loyalty">
-        <i class="fa-solid fa-shopping-cart text-[#2D6A6F] text-lg"></i>
-        <span class="font-medium sidebar-text-label">Customer Ordering and Loyalty</span>
-      </a>
-      <a href="https://riverside-inventory-app.vercel.app/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#152A1F] transition text-[#7A8B79] hover:text-[#FBF9F5]" title="Staff Ops and Inventory">
-        <i class="fa-solid fa-boxes-stacked text-[#2D6A6F] text-lg"></i>
-        <span class="font-medium sidebar-text-label">Staff Ops and Inventory</span>
-      </a>
-      <a href="https://riverside-books-chatbot-khaki.vercel.app/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#152A1F] transition text-[#7A8B79] hover:text-[#FBF9F5]" title="Customer Support Chatbot">
-        <i class="fa-solid fa-robot text-[#2D6A6F] text-lg"></i>
-        <span class="font-medium sidebar-text-label">Customer Support Chatbot</span>
-      </a>
-      <a href="https://riverside-social-app.vercel.app/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#152A1F] transition text-[#7A8B79] hover:text-[#FBF9F5]" title="Marketing Content Generator">
-        <i class="fa-solid fa-bullhorn text-[#2D6A6F] text-lg"></i>
-        <span class="font-medium sidebar-text-label">Marketing Content Generator</span>
-      </a>
-    </nav>
+    <!-- Sidebar Navigation Links Grouped -->
+    <nav class="sidebar-nav flex-1 p-4 space-y-6 overflow-y-auto">
+      
+      <!-- CUSTOMER SECTION -->
+      <div>
+        <h3 class="text-[0.7rem] uppercase tracking-widest text-[#7A8B79] font-bold px-3 mb-3 sidebar-text-label">Customer</h3>
+        <div class="space-y-2">
+          
+          <!-- Riverside Reader -->
+          <a href="index.html" class="flex items-center gap-3 p-3 rounded-xl bg-[#254A37] border border-[#325E47] text-[#FBF9F5] transition shadow-sm" title="Riverside Reader">
+            <img src="RiversideReadersIcon.png" alt="Reader Icon" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 bg-[#152A1F] p-1" />
+            <div class="sidebar-text-label">
+              <div class="font-serif font-bold text-sm leading-tight text-white">Riverside Reader</div>
+              <div class="text-[0.65rem] text-[#8EA897] uppercase tracking-wider font-medium">Read & Discover</div>
+            </div>
+          </a>
 
-    <!-- Sidebar Footer -->
-    <div class="p-4 border-t border-[#152A1F]">
-      <div class="text-xs text-[#7A8B79] sidebar-text-label">
-        <p>© 2024 Riverside Books[cite: 2]</p>
+          <!-- Ask Riverside (Chatbot) -->
+          <a href="https://riverside-books-chatbot-khaki.vercel.app/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#254A37]/50 transition text-[#C2D0C7] hover:text-white" title="Ask Riverside">
+            <img src="RiversideAskIcon.png" alt="Chatbot Icon" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 bg-[#152A1F] p-1" />
+            <div class="sidebar-text-label">
+              <div class="font-serif font-bold text-sm leading-tight">Ask Riverside</div>
+              <div class="text-[0.65rem] text-[#8EA897] uppercase tracking-wider font-medium">Find & Connect</div>
+            </div>
+          </a>
+
+        </div>
       </div>
-    </div>
+
+      <!-- STAFF SECTION -->
+      <div>
+        <h3 class="text-[0.7rem] uppercase tracking-widest text-[#7A8B79] font-bold px-3 mb-3 sidebar-text-label">Staff</h3>
+        <div class="space-y-2">
+          
+          <!-- Riverside Shelves (Inventory) -->
+          <a href="https://riverside-inventory-app.vercel.app/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#254A37]/50 transition text-[#C2D0C7] hover:text-white" title="Riverside Shelves">
+            <img src="RiversideShelvesIcon.png" alt="Inventory Icon" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 bg-[#152A1F] p-1" />
+            <div class="sidebar-text-label">
+              <div class="font-serif font-bold text-sm leading-tight">Riverside Shelves</div>
+              <div class="text-[0.65rem] text-[#8EA897] uppercase tracking-wider font-medium">Inventory & Preorders</div>
+            </div>
+          </a>
+
+          <!-- Riverside Press (Marketing) -->
+          <a href="https://riverside-social-app.vercel.app/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 rounded-xl hover:bg-[#254A37]/50 transition text-[#C2D0C7] hover:text-white" title="Riverside Press">
+            <img src="RiversidePressIcon.png" alt="Social Icon" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 bg-[#152A1F] p-1" />
+            <div class="sidebar-text-label">
+              <div class="font-serif font-bold text-sm leading-tight">Riverside Press</div>
+              <div class="text-[0.65rem] text-[#8EA897] uppercase tracking-wider font-medium">Create & Share</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </nav>
   </aside>
 
   <!-- Main Content Wrapper -->
@@ -88,7 +111,7 @@
     <!-- Top Navigation -->
     <header class="navbar">
       <div class="nav-brand">
-        <img src="riversidebook.png" alt="Riverside Books Logo" class="brand-logo-img">
+        <img src="Riversidelogo.png" alt="Riverside Books Logo" class="brand-logo-img">
         <div class="brand-text">
           <span class="brand-title">RIVERSIDE BOOKS</span>
           <span class="brand-subtitle">INDEPENDENT & LOCAL</span>
