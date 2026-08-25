@@ -129,23 +129,24 @@
         <!-- app.js will dynamically load books here -->
       </div>
     </section>
-
+    
     <section class="rewards-section">
-      <div class="rewards-header">
-        <h2>
-          Riverside Rewards 
-          <svg style="width: 24px; height: 24px; stroke: var(--primary-green); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; margin-left: 0.25rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.5 12 13 13 12"/></svg>
-        </h2>
-        <p>Every purchase earns you a stamp!<br>Collect 10 stamps and get <strong>$10 off</strong> your next purchase.</p>
-      </div>
-      <div id="stamp-grid" class="stamp-grid-container">
-        <!-- app.js will dynamically load stamps here -->
-      </div>
-      <div class="rewards-footer">
-        <span id="loyalty-progress-text" class="rewards-status">Loading...</span>
-        <button class="btn-dark">View Rewards</button>
-      </div>
-    </section>
+  <div class="rewards-header">
+    <h2>Riverside Reader Rewards</h2>
+    <p>Collect a stamp with every book purchase. Fill your card to earn free reads and bookstore perks!</p>
+  </div>
+  
+  <div class="stamp-grid-container" id="stamp-grid">
+    <!-- Stamp slots rendered dynamically -->
+  </div>
+
+  <div class="rewards-footer">
+    <span id="loyalty-progress-text" class="rewards-status">0 / 10 Stamps collected</span>
+    <div style="display: flex; gap: 0.5rem;">
+      <button class="btn-dark btn-small" id="rewards-demo-btn" style="background: var(--accent-orange);">Preview Demo</button>      <button class="btn-dark btn-small">View My Stamps</button>
+    </div>
+  </div>
+</section>
 
   </main>
 

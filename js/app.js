@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   renderLoyaltyGrid(0); 
   initLoyaltyCheck();   
+  initRewardsDemo(); 
   initFilterTags();
   initShopFilters(); 
   initSortHandler();
@@ -240,11 +241,28 @@ function startPickupAlertPolling(purchaseId) {
 }
 
 /* ----------------------------------------------------
-   STEP 5: Reader Loyalty Stamp Rendering
+   STEP 5: Reader Loyalty Stamp Rendering (With 10/10 Celebration)
 ---------------------------------------------------- */
 function renderLoyaltyGrid(earnedCount = 0) {
   const grid = document.getElementById('stamp-grid');
   if (!grid) return;
+
+  const container = grid.closest('.rewards-section');
+  let banner = container?.querySelector('.reward-banner');
+
+  // Trigger celebration effects if 10/10 milestone is reached
+  if (earnedCount >= 10) {
+    grid.classList.add('reward-unlocked');
+    if (!banner && container) {
+      banner = document.createElement('div');
+      banner.className = 'reward-banner';
+      banner.innerHTML = '🎉 <strong>REWARD UNLOCKED!</strong> Show this screen at the counter for your free book or drink!';
+      container.insertBefore(banner, grid);
+    }
+  } else {
+    grid.classList.remove('reward-unlocked');
+    if (banner) banner.remove();
+  }
 
   grid.innerHTML = '';
   for (let i = 1; i <= 10; i++) {
@@ -257,7 +275,7 @@ function renderLoyaltyGrid(earnedCount = 0) {
   const progressText = document.getElementById('loyalty-progress-text');
   const navBadgeText = document.getElementById('nav-stamp-count');
 
-  if (progressText) progressText.innerText = `${earnedCount} / 10 Stamps collected`;
+  if (progressText) progressText.innerText = earnedCount >= 10 ? '✨ 10 / 10 Completed!' : `${earnedCount} / 10 Stamps collected`;
   if (navBadgeText) navBadgeText.innerText = earnedCount;
 }
 
@@ -265,7 +283,7 @@ function renderLoyaltyGrid(earnedCount = 0) {
    STEP 6: Dynamic Loyalty Lookup
 ---------------------------------------------------- */
 function initLoyaltyCheck() {
-  const viewRewardsBtn = document.querySelector('.rewards-footer .btn-dark');
+  const viewRewardsBtn = document.querySelector('.rewards-footer .btn-dark:not(#rewards-demo-btn)');
   const accountModal = document.getElementById('account-modal');
   
   if (viewRewardsBtn) {
@@ -273,6 +291,32 @@ function initLoyaltyCheck() {
       accountModal?.classList.remove('hidden');
     });
   }
+}
+
+/* ----------------------------------------------------
+   NEW: Rewards Interactive Preview Demo
+---------------------------------------------------- */
+function initRewardsDemo() {
+  const demoBtn = document.getElementById('rewards-demo-btn');
+  if (!demoBtn) return;
+
+  let demoStep = 0;
+  const demoMilestones = [3, 7, 10, 0]; 
+
+  demoBtn.addEventListener('click', () => {
+    const currentStamps = demoMilestones[demoStep];
+    renderLoyaltyGrid(currentStamps);
+    
+    if (currentStamps === 10) {
+      demoBtn.innerText = "Reset Demo";
+    } else if (currentStamps === 0) {
+      demoBtn.innerText = "Preview Demo";
+    } else {
+      demoBtn.innerText = `Demo: ${currentStamps}/10 Stamps`;
+    }
+
+    demoStep = (demoStep + 1) % demoMilestones.length;
+  });
 }
 
 /* ----------------------------------------------------
