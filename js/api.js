@@ -23,8 +23,9 @@ export const InventoryAPI = {
         query = query.eq('genre', category);
       }
 
+      // Fixed: Removed isbn from ilike query since isbn is stored as a bigint (number) column
       if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,isbn.ilike.%${searchQuery}%`);
+        query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
       }
 
       const { data: books, error: booksError } = await query;
