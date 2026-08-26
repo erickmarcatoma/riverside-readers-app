@@ -30,16 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
    STEP 1 & 2: Search, Filter & Load Inventory (Home & Shop)
 ---------------------------------------------------- */
 async function loadFeaturedBooks(category = 'all', searchQuery = '') {
+  const isHomePageContainer = !!document.getElementById('books-container');
   const container = document.getElementById('books-container') || document.getElementById('full-inventory-container');
   if (!container) return;
   
   container.innerHTML = `<div class="book-card-loading">Searching Supabase catalog...</div>`;
 
   try {
-    const books = await InventoryAPI.getBooks(category, searchQuery);
+    let books = await InventoryAPI.getBooks(category, searchQuery);
     currentBooksCache = books || [];
 
-    renderBookList(currentBooksCache, container);
+    // Limit to 4 to 8 featured titles (e.g., 6 titles) strictly on the home page container
+    if (isHomePageContainer && (!searchQuery || searchQuery === '') && category === 'all') {
+      books = books.slice(0, 6);
+    }
+
+    renderBookList(books, container);
 
   } catch (err) {
     container.innerHTML = `
@@ -97,11 +103,11 @@ async function loadStaffPicks() {
           </div>
           <div class="book-info">
             <h4>${displayTitle}</h4>
-            <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4a5568; margin: 0.25rem 0 0.5rem 0;">
+            <p class="book-author" style="margin-bottom: 0.4rem;">by ${book.author}</p>
+            <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4a5568; margin: 0 0 0.5rem 0;">
               <span style="width: 8px; height: 8px; background-color: ${dotColor}; border-radius: 50%; display: inline-block;"></span>
               <span>${stockText}</span>
             </div>
-            <p class="book-author">by ${book.author}</p>
             ${staffBlurb}
             
             <!-- Price and Button Wrapper aligned uniformly at the bottom -->
@@ -163,11 +169,11 @@ function renderBookList(books, container) {
         </div>
         <div class="book-info">
           <h4>${displayTitle}</h4>
-          <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4a5568; margin: 0.25rem 0 0.5rem 0;">
+          <p class="book-author" style="margin-bottom: 0.4rem;">by ${book.author}</p>
+          <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4a5568; margin: 0 0 0.5rem 0;">
             <span style="width: 8px; height: 8px; background-color: ${dotColor}; border-radius: 50%; display: inline-block;"></span>
             <span>${stockText}</span>
           </div>
-          <p class="book-author">by ${book.author}</p>
           
           <!-- Price and Button Wrapper aligned uniformly at the bottom -->
           <div style="margin-top: auto; padding-top: 0.75rem;">
