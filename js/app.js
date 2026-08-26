@@ -443,9 +443,31 @@ function initMobileMenu() {
     hamburger.innerHTML = '☰ Menu';
     
     navbar.insertBefore(hamburger, navLinks);
+  }
 
-    hamburger.addEventListener('click', () => {
+  if (hamburger && navLinks) {
+    // Force the menu to always start closed upon script initialization
+    navLinks.classList.remove('mobile-open');
+
+    // Toggle open/closed strictly on explicit hamburger button clicks
+    hamburger.onclick = (e) => {
+      e.stopPropagation();
       navLinks.classList.toggle('mobile-open');
+    };
+
+    // Ensure clicking any navigation link hides the menu and doesn't trigger rogue toggles
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navLinks.classList.remove('mobile-open');
+      });
+    });
+
+    // Close the menu if a user clicks anywhere else outside the navbar
+    document.addEventListener('click', (e) => {
+      if (!navbar.contains(e.target)) {
+        navLinks.classList.remove('mobile-open');
+      }
     });
   }
 }
