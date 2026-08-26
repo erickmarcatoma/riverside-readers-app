@@ -220,6 +220,7 @@ function initReservationForm() {
     const customerName = document.getElementById('customer-name').value;
     const customerEmail = document.getElementById('customer-email').value;
     const customerPhone = document.getElementById('customer-phone').value;
+    const quantity = parseInt(document.getElementById('reservation-quantity')?.value) || 1;
 
     try {
       const book = await InventoryAPI.getBookByIsbn(isbn);
@@ -229,7 +230,7 @@ function initReservationForm() {
         customerName,
         customerEmail,
         customerPhone,
-        quantity: 1,
+        quantity: quantity,
         regularPrice: book.regular_price
       });
 
@@ -528,7 +529,7 @@ function initNavbarActions() {
     }
   });
 
-  logoutBtn?.addEventListener('click', () => {
+    logoutBtn?.addEventListener('click', () => {
     accountProfileView.classList.add('hidden');
     accountLoginView.classList.remove('hidden');
     document.getElementById('account-email-input').value = '';

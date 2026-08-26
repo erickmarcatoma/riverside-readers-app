@@ -146,13 +146,13 @@
           Local Picks & Staff Favorites
           <svg style="width: 32px; height: 32px; stroke: var(--primary-green); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.5 12 13 13 12"/></svg>
         </h1>
-        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Hand-selected titles, regional writer spotlights, and personal favorites recommended directly by our bookstore team[cite: 7].</p>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Hand-selected titles, regional writer spotlights, and personal favorites recommended directly by our bookstore team.</p>
       </div>
 
       <!-- Staff Picks Inventory Container -->
       <section>
         <div id="local-picks-container" class="book-carousel" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem;">
-          <!-- app.js will dynamically load staff picks here[cite: 7] -->
+          <!-- app.js will dynamically load staff picks here -->
         </div>
       </section>
 
@@ -170,10 +170,16 @@
         <input type="hidden" id="modal-isbn" required>
         <label for="customer-name">Full Name</label>
         <input type="text" id="customer-name" placeholder="Jane Doe" required>
+        
         <label for="customer-email">Email Address</label>
         <input type="email" id="customer-email" placeholder="jane@example.com" required>
+        
         <label for="customer-phone">Phone Number (Optional)</label>
         <input type="tel" id="customer-phone" placeholder="555-123-4567">
+        
+        <label for="reservation-quantity">Quantity</label>
+        <input type="number" id="reservation-quantity" value="1" min="1" max="10" required style="width: 100%; padding: 0.75rem 1rem; margin-top: 0.4rem; border: 1px solid #ccc; border-radius: var(--border-radius-sm); font-size: 1rem; outline: none;">
+
         <div class="modal-actions">
           <button type="button" id="cancel-modal-btn" class="btn-secondary">Cancel</button>
           <button type="submit" class="btn-primary">Confirm Reservation</button>

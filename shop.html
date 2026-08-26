@@ -188,10 +188,16 @@
         <input type="hidden" id="modal-isbn" required>
         <label for="customer-name">Full Name</label>
         <input type="text" id="customer-name" placeholder="Jane Doe" required>
+        
         <label for="customer-email">Email Address</label>
         <input type="email" id="customer-email" placeholder="jane@example.com" required>
+        
         <label for="customer-phone">Phone Number (Optional)</label>
         <input type="tel" id="customer-phone" placeholder="555-123-4567">
+        
+        <label for="reservation-quantity">Quantity</label>
+        <input type="number" id="reservation-quantity" value="1" min="1" max="10" required style="width: 100%; padding: 0.75rem 1rem; margin-top: 0.4rem; border: 1px solid #ccc; border-radius: var(--border-radius-sm); font-size: 1rem; outline: none;">
+
         <div class="modal-actions">
           <button type="button" id="cancel-modal-btn" class="btn-secondary">Cancel</button>
           <button type="submit" class="btn-primary">Confirm Reservation</button>
