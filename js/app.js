@@ -265,7 +265,7 @@ function startPickupAlertPolling(purchaseId) {
 }
 
 /* ----------------------------------------------------
-   STEP 5: Reader Loyalty Stamp Rendering (With 10/10 Celebration)
+   STEP 5: Reader Loyalty Stamp Rendering (With 10/10 Celebration & Choices)
 ---------------------------------------------------- */
 function renderLoyaltyGrid(earnedCount = 0) {
   const grid = document.getElementById('stamp-grid');
@@ -274,13 +274,20 @@ function renderLoyaltyGrid(earnedCount = 0) {
   const container = grid.closest('.rewards-section');
   let banner = container?.querySelector('.reward-banner');
 
-  // Trigger celebration effects if 10/10 milestone is reached
+  // Trigger celebration effects and multi-choice options if 10/10 milestone is reached
   if (earnedCount >= 10) {
     grid.classList.add('reward-unlocked');
     if (!banner && container) {
       banner = document.createElement('div');
       banner.className = 'reward-banner';
-      banner.innerHTML = '🎉 <strong>REWARD UNLOCKED!</strong> Show this screen at the counter for your free book or drink!';
+      banner.innerHTML = `
+        🎉 <strong>REWARD UNLOCKED!</strong> Choose your 10/10 perk to redeem at the counter:
+        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-dark btn-small" onclick="alert('Selected: Free Book! Show this screen at the register.')">Free Book</button>
+          <button class="btn-dark btn-small" onclick="alert('Selected: Exclusive Access! Show this screen at the register.')">Exclusive Access</button>
+          <button class="btn-dark btn-small" onclick="alert('Selected: Reading Accessories & Keepsakes! Show this screen at the register.')">Keepsakes</button>
+        </div>
+      `;
       container.insertBefore(banner, grid);
     }
   } else {
